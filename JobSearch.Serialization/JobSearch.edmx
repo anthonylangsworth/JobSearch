@@ -1,0 +1,277 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="JobSearch.Serialization.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityContainer Name="JobSearchSerializationStoreContainer">
+          <EntitySet Name="Activity" EntityType="JobSearch.Serialization.Store.Activity" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="JobOpening" EntityType="JobSearch.Serialization.Store.JobOpening" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="JobOpeningPerson" EntityType="JobSearch.Serialization.Store.JobOpeningPerson" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="Person" EntityType="JobSearch.Serialization.Store.Person" store:Type="Tables" Schema="dbo" />
+          <AssociationSet Name="FK_Activity_JobOpening" Association="JobSearch.Serialization.Store.FK_Activity_JobOpening">
+            <End Role="JobOpening" EntitySet="JobOpening" />
+            <End Role="Activity" EntitySet="Activity" />
+          </AssociationSet>
+          <AssociationSet Name="FK_JobOpeningPerson_JobOpening" Association="JobSearch.Serialization.Store.FK_JobOpeningPerson_JobOpening">
+            <End Role="JobOpening" EntitySet="JobOpening" />
+            <End Role="JobOpeningPerson" EntitySet="JobOpeningPerson" />
+          </AssociationSet>
+          <AssociationSet Name="FK_JobOpeningPerson_Person" Association="JobSearch.Serialization.Store.FK_JobOpeningPerson_Person">
+            <End Role="Person" EntitySet="Person" />
+            <End Role="JobOpeningPerson" EntitySet="JobOpeningPerson" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="Activity">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="JobOpeningId" Type="int" Nullable="false" />
+          <Property Name="DateTime" Type="datetime" Nullable="false" />
+          <Property Name="Notes" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="JobOpening">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Position" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="Company" Type="nvarchar(max)" />
+          <Property Name="Description" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="Notes" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="JobOpeningPerson">
+          <Key>
+            <PropertyRef Name="JobOpeningId" />
+            <PropertyRef Name="PersonId" />
+          </Key>
+          <Property Name="JobOpeningId" Type="int" Nullable="false" />
+          <Property Name="PersonId" Type="int" Nullable="false" />
+          <Property Name="Type" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Person">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Company" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="ContactName" Type="nvarchar(max)" />
+          <Property Name="Phone" Type="nvarchar(max)" />
+          <Property Name="Email" Type="nvarchar(max)" />
+          <Property Name="Url" Type="nvarchar(max)" />
+          <Property Name="Notes" Type="nvarchar(max)" />
+        </EntityType>
+        <Association Name="FK_Activity_JobOpening">
+          <End Role="JobOpening" Type="JobSearch.Serialization.Store.JobOpening" Multiplicity="1" />
+          <End Role="Activity" Type="JobSearch.Serialization.Store.Activity" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="JobOpening">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Activity">
+              <PropertyRef Name="JobOpeningId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_JobOpeningPerson_JobOpening">
+          <End Role="JobOpening" Type="JobSearch.Serialization.Store.JobOpening" Multiplicity="1" />
+          <End Role="JobOpeningPerson" Type="JobSearch.Serialization.Store.JobOpeningPerson" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="JobOpening">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="JobOpeningPerson">
+              <PropertyRef Name="JobOpeningId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_JobOpeningPerson_Person">
+          <End Role="Person" Type="JobSearch.Serialization.Store.Person" Multiplicity="1" />
+          <End Role="JobOpeningPerson" Type="JobSearch.Serialization.Store.JobOpeningPerson" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Person">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="JobOpeningPerson">
+              <PropertyRef Name="PersonId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="JobSearch.Serialization" Alias="Self" p1:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:p1="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="JobSearchEntities" p1:LazyLoadingEnabled="true">
+          <EntitySet Name="Activities" EntityType="JobSearch.Serialization.Activity" />
+          <EntitySet Name="JobOpenings" EntityType="JobSearch.Serialization.JobOpening" />
+          <EntitySet Name="JobOpeningPersons" EntityType="JobSearch.Serialization.JobOpeningPerson" />
+          <EntitySet Name="People" EntityType="JobSearch.Serialization.Person" />
+          <AssociationSet Name="FK_Activity_JobOpening" Association="JobSearch.Serialization.FK_Activity_JobOpening">
+            <End Role="JobOpening" EntitySet="JobOpenings" />
+            <End Role="Activity" EntitySet="Activities" />
+          </AssociationSet>
+          <AssociationSet Name="FK_JobOpeningPerson_JobOpening" Association="JobSearch.Serialization.FK_JobOpeningPerson_JobOpening">
+            <End Role="JobOpening" EntitySet="JobOpenings" />
+            <End Role="JobOpeningPerson" EntitySet="JobOpeningPersons" />
+          </AssociationSet>
+          <AssociationSet Name="FK_JobOpeningPerson_Person" Association="JobSearch.Serialization.FK_JobOpeningPerson_Person">
+            <End Role="Person" EntitySet="People" />
+            <End Role="JobOpeningPerson" EntitySet="JobOpeningPersons" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="Activity">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" p1:StoreGeneratedPattern="Identity" />
+          <Property Name="JobOpeningId" Type="Int32" Nullable="false" />
+          <Property Name="DateTime" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Notes" Type="String" MaxLength="Max" Unicode="true" FixedLength="false" />
+          <NavigationProperty Name="JobOpening" Relationship="JobSearch.Serialization.FK_Activity_JobOpening" FromRole="Activity" ToRole="JobOpening" />
+        </EntityType>
+        <EntityType Name="JobOpening">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" p1:StoreGeneratedPattern="Identity" />
+          <Property Name="Position" Type="String" Nullable="false" MaxLength="Max" Unicode="true" FixedLength="false" />
+          <Property Name="Company" Type="String" MaxLength="Max" Unicode="true" FixedLength="false" />
+          <Property Name="Description" Type="String" Nullable="false" MaxLength="Max" Unicode="true" FixedLength="false" />
+          <Property Name="Notes" Type="String" MaxLength="Max" Unicode="true" FixedLength="false" />
+          <NavigationProperty Name="Activities" Relationship="JobSearch.Serialization.FK_Activity_JobOpening" FromRole="JobOpening" ToRole="Activity" />
+          <NavigationProperty Name="JobOpeningPersons" Relationship="JobSearch.Serialization.FK_JobOpeningPerson_JobOpening" FromRole="JobOpening" ToRole="JobOpeningPerson" />
+        </EntityType>
+        <EntityType Name="JobOpeningPerson">
+          <Key>
+            <PropertyRef Name="JobOpeningId" />
+            <PropertyRef Name="PersonId" />
+          </Key>
+          <Property Name="JobOpeningId" Type="Int32" Nullable="false" />
+          <Property Name="PersonId" Type="Int32" Nullable="false" />
+          <Property Name="Type" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="JobOpening" Relationship="JobSearch.Serialization.FK_JobOpeningPerson_JobOpening" FromRole="JobOpeningPerson" ToRole="JobOpening" />
+          <NavigationProperty Name="Person" Relationship="JobSearch.Serialization.FK_JobOpeningPerson_Person" FromRole="JobOpeningPerson" ToRole="Person" />
+        </EntityType>
+        <EntityType Name="Person">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" p1:StoreGeneratedPattern="Identity" />
+          <Property Name="Company" Type="String" Nullable="false" MaxLength="Max" Unicode="true" FixedLength="false" />
+          <Property Name="ContactName" Type="String" MaxLength="Max" Unicode="true" FixedLength="false" />
+          <Property Name="Phone" Type="String" MaxLength="Max" Unicode="true" FixedLength="false" />
+          <Property Name="Email" Type="String" MaxLength="Max" Unicode="true" FixedLength="false" />
+          <Property Name="Url" Type="String" MaxLength="Max" Unicode="true" FixedLength="false" />
+          <Property Name="Notes" Type="String" MaxLength="Max" Unicode="true" FixedLength="false" />
+          <NavigationProperty Name="JobOpeningPersons" Relationship="JobSearch.Serialization.FK_JobOpeningPerson_Person" FromRole="Person" ToRole="JobOpeningPerson" />
+        </EntityType>
+        <Association Name="FK_Activity_JobOpening">
+          <End Role="JobOpening" Type="JobSearch.Serialization.JobOpening" Multiplicity="1" />
+          <End Role="Activity" Type="JobSearch.Serialization.Activity" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="JobOpening">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Activity">
+              <PropertyRef Name="JobOpeningId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_JobOpeningPerson_JobOpening">
+          <End Role="JobOpening" Type="JobSearch.Serialization.JobOpening" Multiplicity="1" />
+          <End Role="JobOpeningPerson" Type="JobSearch.Serialization.JobOpeningPerson" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="JobOpening">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="JobOpeningPerson">
+              <PropertyRef Name="JobOpeningId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_JobOpeningPerson_Person">
+          <End Role="Person" Type="JobSearch.Serialization.Person" Multiplicity="1" />
+          <End Role="JobOpeningPerson" Type="JobSearch.Serialization.JobOpeningPerson" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Person">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="JobOpeningPerson">
+              <PropertyRef Name="PersonId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="JobSearchSerializationStoreContainer" CdmEntityContainer="JobSearchEntities">
+          <EntitySetMapping Name="Activities">
+            <EntityTypeMapping TypeName="JobSearch.Serialization.Activity">
+              <MappingFragment StoreEntitySet="Activity">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="JobOpeningId" ColumnName="JobOpeningId" />
+                <ScalarProperty Name="DateTime" ColumnName="DateTime" />
+                <ScalarProperty Name="Notes" ColumnName="Notes" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="JobOpenings">
+            <EntityTypeMapping TypeName="JobSearch.Serialization.JobOpening">
+              <MappingFragment StoreEntitySet="JobOpening">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Position" ColumnName="Position" />
+                <ScalarProperty Name="Company" ColumnName="Company" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Notes" ColumnName="Notes" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="JobOpeningPersons">
+            <EntityTypeMapping TypeName="JobSearch.Serialization.JobOpeningPerson">
+              <MappingFragment StoreEntitySet="JobOpeningPerson">
+                <ScalarProperty Name="JobOpeningId" ColumnName="JobOpeningId" />
+                <ScalarProperty Name="PersonId" ColumnName="PersonId" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="People">
+            <EntityTypeMapping TypeName="JobSearch.Serialization.Person">
+              <MappingFragment StoreEntitySet="Person">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Company" ColumnName="Company" />
+                <ScalarProperty Name="ContactName" ColumnName="ContactName" />
+                <ScalarProperty Name="Phone" ColumnName="Phone" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Url" ColumnName="Url" />
+                <ScalarProperty Name="Notes" ColumnName="Notes" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="True" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

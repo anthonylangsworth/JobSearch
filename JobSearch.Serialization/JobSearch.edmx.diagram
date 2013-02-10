@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="0c7245fa70e94e1bbea50c3389d096c0" Name="Diagram1">
+        <EntityTypeShape EntityType="JobSearch.Serialization.Activity" Width="1.5" PointX="3.375" PointY="0.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="JobSearch.Serialization.JobOpening" Width="1.5" PointX="0.5" PointY="0.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="JobSearch.Serialization.JobOpeningPerson" Width="1.5" PointX="0.625" PointY="3.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="JobSearch.Serialization.Person" Width="1.5" PointX="0.625" PointY="6.5" IsExpanded="true" />
+        <AssociationConnector Association="JobSearch.Serialization.FK_Activity_JobOpening" ManuallyRouted="false" />
+        <AssociationConnector Association="JobSearch.Serialization.FK_JobOpeningPerson_JobOpening" ManuallyRouted="false" />
+        <AssociationConnector Association="JobSearch.Serialization.FK_JobOpeningPerson_Person" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
