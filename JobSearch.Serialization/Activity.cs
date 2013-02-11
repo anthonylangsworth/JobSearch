@@ -16,9 +16,13 @@ namespace JobSearch.Serialization
     {
         public int Id { get; set; }
         public int JobOpeningId { get; set; }
-        public System.DateTime DateTime { get; set; }
-        public string Notes { get; set; }
+        public System.DateTime Start { get; set; }
+        public System.DateTimeOffset Duration { get; set; }
+        public string Description { get; set; }
+        public bool Completed { get; set; }
+        public int ContactId { get; set; }
     
         public virtual JobOpening JobOpening { get; set; }
+        public virtual Contact Contact { get; set; }
     }
 }

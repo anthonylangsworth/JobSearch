@@ -48,10 +48,10 @@
     <Compile Include="Activity.cs">
       <DependentUpon>JobSearch.tt</DependentUpon>
     </Compile>
-    <Compile Include="JobOpening.cs">
+    <Compile Include="Contact.cs">
       <DependentUpon>JobSearch.tt</DependentUpon>
     </Compile>
-    <Compile Include="JobOpeningPerson.cs">
+    <Compile Include="JobOpening.cs">
       <DependentUpon>JobSearch.tt</DependentUpon>
     </Compile>
     <Compile Include="JobSearch.Context.cs">
@@ -68,9 +68,6 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>JobSearch.edmx</DependentUpon>
-    </Compile>
-    <Compile Include="Person.cs">
-      <DependentUpon>JobSearch.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

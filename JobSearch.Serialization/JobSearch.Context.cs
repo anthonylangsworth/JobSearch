@@ -27,7 +27,6 @@ namespace JobSearch.Serialization
     
         public DbSet<Activity> Activities { get; set; }
         public DbSet<JobOpening> JobOpenings { get; set; }
-        public DbSet<JobOpeningPerson> JobOpeningPersons { get; set; }
-        public DbSet<Person> People { get; set; }
+        public DbSet<Contact> Contacts { get; set; }
     }
 }

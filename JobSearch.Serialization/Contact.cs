@@ -12,21 +12,22 @@ namespace JobSearch.Serialization
     using System;
     using System.Collections.Generic;
     
-    public partial class Person
+    public partial class Contact
     {
-        public Person()
+        public Contact()
         {
-            this.JobOpeningPersons = new HashSet<JobOpeningPerson>();
+            this.JobOpenings = new HashSet<JobOpening>();
+            this.Activities = new HashSet<Activity>();
         }
     
         public int Id { get; set; }
-        public string Company { get; set; }
-        public string ContactName { get; set; }
+        public string Organization { get; set; }
+        public string Name { get; set; }
         public string Phone { get; set; }
         public string Email { get; set; }
-        public string Url { get; set; }
         public string Notes { get; set; }
     
-        public virtual ICollection<JobOpeningPerson> JobOpeningPersons { get; set; }
+        public virtual ICollection<JobOpening> JobOpenings { get; set; }
+        public virtual ICollection<Activity> Activities { get; set; }
     }
 }

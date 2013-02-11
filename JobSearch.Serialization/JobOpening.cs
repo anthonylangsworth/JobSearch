@@ -17,16 +17,17 @@ namespace JobSearch.Serialization
         public JobOpening()
         {
             this.Activities = new HashSet<Activity>();
-            this.JobOpeningPersons = new HashSet<JobOpeningPerson>();
+            this.Contacts = new HashSet<Contact>();
         }
     
         public int Id { get; set; }
-        public string Position { get; set; }
-        public string Company { get; set; }
         public string Description { get; set; }
         public string Notes { get; set; }
+        public string Title { get; set; }
+        public string Organization { get; set; }
+        public string Url { get; set; }
     
         public virtual ICollection<Activity> Activities { get; set; }
-        public virtual ICollection<JobOpeningPerson> JobOpeningPersons { get; set; }
+        public virtual ICollection<Contact> Contacts { get; set; }
     }
 }
