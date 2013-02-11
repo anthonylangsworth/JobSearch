@@ -1,6 +1,6 @@
 ﻿USE [master]
 GO
-/****** Object:  Database [JobSearch]    Script Date: 2/9/2013 10:38:35 PM ******/
+/****** Object:  Database [JobSearch]    Script Date: 2/11/2013 11:13:36 PM ******/
 CREATE DATABASE [JobSearch]
  CONTAINMENT = NONE
  ON  PRIMARY 
@@ -75,7 +75,7 @@ ALTER DATABASE [JobSearch] SET TARGET_RECOVERY_TIME = 0 SECONDS
 GO
 USE [JobSearch]
 GO
-/****** Object:  Table [dbo].[Activity]    Script Date: 2/9/2013 10:38:35 PM ******/
+/****** Object:  Table [dbo].[Activity]    Script Date: 2/11/2013 11:13:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -83,8 +83,11 @@ GO
 CREATE TABLE [dbo].[Activity](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
 	[JobOpeningId] [int] NOT NULL,
-	[DateTime] [datetime] NOT NULL,
-	[Notes] [nvarchar](max) NULL,
+	[ContactId] [int] NOT NULL,
+	[Start] [datetime] NOT NULL,
+	[Duration] [datetimeoffset](7) NOT NULL,
+	[Description] [nvarchar](max) NOT NULL,
+	[Completed] [bit] NOT NULL,
  CONSTRAINT [PK_Activity] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
@@ -92,17 +95,37 @@ CREATE TABLE [dbo].[Activity](
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[JobOpening]    Script Date: 2/9/2013 10:38:35 PM ******/
+/****** Object:  Table [dbo].[Contact]    Script Date: 2/11/2013 11:13:36 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Contact](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Organization] [nvarchar](max) NOT NULL,
+	[Name] [nvarchar](max) NULL,
+	[Phone] [nvarchar](max) NULL,
+	[Email] [nvarchar](max) NULL,
+	[Notes] [nvarchar](max) NULL,
+ CONSTRAINT [PK_Contact] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+
+GO
+/****** Object:  Table [dbo].[JobOpening]    Script Date: 2/11/2013 11:13:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[JobOpening](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[Position] [nvarchar](max) NOT NULL,
-	[Company] [nvarchar](max) NULL,
+	[Title] [nvarchar](max) NOT NULL,
+	[Organization] [nvarchar](max) NULL,
 	[Description] [nvarchar](max) NOT NULL,
 	[Notes] [nvarchar](max) NULL,
+	[Url] [nvarchar](max) NULL,
  CONSTRAINT [PK_JobOpening] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
@@ -110,57 +133,41 @@ CREATE TABLE [dbo].[JobOpening](
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[JobOpeningPerson]    Script Date: 2/9/2013 10:38:35 PM ******/
+/****** Object:  Table [dbo].[JobOpeningContact]    Script Date: 2/11/2013 11:13:36 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE TABLE [dbo].[JobOpeningPerson](
+CREATE TABLE [dbo].[JobOpeningContact](
 	[JobOpeningId] [int] NOT NULL,
-	[PersonId] [int] NOT NULL,
-	[Type] [int] NOT NULL,
- CONSTRAINT [PK_JobOpeningPerson] PRIMARY KEY CLUSTERED 
+	[ContactId] [int] NOT NULL,
+ CONSTRAINT [PK_JobOpeningContact] PRIMARY KEY CLUSTERED 
 (
 	[JobOpeningId] ASC,
-	[PersonId] ASC
+	[ContactId] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 
 GO
-/****** Object:  Table [dbo].[Person]    Script Date: 2/9/2013 10:38:35 PM ******/
-SET ANSI_NULLS ON
+ALTER TABLE [dbo].[Activity]  WITH CHECK ADD  CONSTRAINT [FK_Activity_Contact] FOREIGN KEY([ContactId])
+REFERENCES [dbo].[Contact] ([Id])
 GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[Person](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[Company] [nvarchar](max) NOT NULL,
-	[ContactName] [nvarchar](max) NULL,
-	[Phone] [nvarchar](max) NULL,
-	[Email] [nvarchar](max) NULL,
-	[Url] [nvarchar](max) NULL,
-	[Notes] [nvarchar](max) NULL,
- CONSTRAINT [PK_Person] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-
+ALTER TABLE [dbo].[Activity] CHECK CONSTRAINT [FK_Activity_Contact]
 GO
 ALTER TABLE [dbo].[Activity]  WITH CHECK ADD  CONSTRAINT [FK_Activity_JobOpening] FOREIGN KEY([JobOpeningId])
 REFERENCES [dbo].[JobOpening] ([Id])
 GO
 ALTER TABLE [dbo].[Activity] CHECK CONSTRAINT [FK_Activity_JobOpening]
 GO
-ALTER TABLE [dbo].[JobOpeningPerson]  WITH CHECK ADD  CONSTRAINT [FK_JobOpeningPerson_JobOpening] FOREIGN KEY([JobOpeningId])
+ALTER TABLE [dbo].[JobOpeningContact]  WITH CHECK ADD  CONSTRAINT [FK_JobOpeningContact_Contact] FOREIGN KEY([ContactId])
+REFERENCES [dbo].[Contact] ([Id])
+GO
+ALTER TABLE [dbo].[JobOpeningContact] CHECK CONSTRAINT [FK_JobOpeningContact_Contact]
+GO
+ALTER TABLE [dbo].[JobOpeningContact]  WITH CHECK ADD  CONSTRAINT [FK_JobOpeningContact_JobOpening] FOREIGN KEY([JobOpeningId])
 REFERENCES [dbo].[JobOpening] ([Id])
 GO
-ALTER TABLE [dbo].[JobOpeningPerson] CHECK CONSTRAINT [FK_JobOpeningPerson_JobOpening]
-GO
-ALTER TABLE [dbo].[JobOpeningPerson]  WITH CHECK ADD  CONSTRAINT [FK_JobOpeningPerson_Person] FOREIGN KEY([PersonId])
-REFERENCES [dbo].[Person] ([Id])
-GO
-ALTER TABLE [dbo].[JobOpeningPerson] CHECK CONSTRAINT [FK_JobOpeningPerson_Person]
+ALTER TABLE [dbo].[JobOpeningContact] CHECK CONSTRAINT [FK_JobOpeningContact_JobOpening]
 GO
 USE [master]
 GO
