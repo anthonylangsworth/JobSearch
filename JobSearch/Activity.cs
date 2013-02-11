@@ -30,11 +30,14 @@ namespace JobSearch
         /// <param name="description">
         /// Option description or notes.
         /// </param>
+        /// <param name="completed">
+        /// True if the activity is created completed, false otherwise (the default).
+        /// </param>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="contact"/> cannot be null.
         /// </exception>
-        public Activity(int id, DateTime start, TimeSpan duration, Contact contact, string description)
-            : this(start, duration, contact, description)
+        public Activity(int id, DateTime start, TimeSpan duration, Contact contact, string description, bool completed = false)
+            : this(start, duration, contact, description, completed)
         {
             Contract.Ensures(this.Id == id, "Incorrect Id");
 
@@ -48,33 +51,42 @@ namespace JobSearch
         /// The time the activity starts.
         /// </param>
         /// <param name="duration">
-        /// The duration of the activity.
+        /// The duration of the activity. This must be positive.
         /// </param>
         /// <param name="contact">
         /// The <see cref="Contact"/> involved with the activity, including
         /// contact details and address.
         /// </param>
         /// <param name="description">
-        /// Option description or notes.
+        /// Option description or notes. This cannot be null, empty or
+        /// white space.
+        /// </param>
+        /// <param name="completed">
+        /// True if the activity is created completed, false otherwise (the default).
         /// </param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="contact"/> cannot be null.
+        /// <paramref name="contact"/> cannot be null. <paramref name="description"/> cannot
+        /// be null, empty or whitespace.
         /// </exception>
-        public Activity(DateTime start, TimeSpan duration, Contact contact, string description)
+        /// <exception cref="ArgumentException">
+        /// <paramref name="duration"/> must be positive.
+        /// </exception>
+        public Activity(DateTime start, TimeSpan duration, Contact contact, string description, bool completed = false)
         {
             Contract.Requires<ArgumentNullException>(contact != null, "contact");
+            Contract.Requires<ArgumentException>(duration == duration.Duration(), "duration");
+            Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(description), "description");
             Contract.Ensures(Start == start);
             Contract.Ensures(Duration == duration);
             Contract.Ensures(Contact.Equals(contact));
             Contract.Ensures(Description == description);
-            Contract.Ensures(!Completed);
-            Contract.EndContractBlock();
+            Contract.Ensures(Completed == completed);
 
             this.Start = start;
             this.Contact = contact;
             this.Description = description;
             this.Duration = duration;
-            this.Completed = false;
+            this.Completed = completed;
         }
 
         /// <summary>

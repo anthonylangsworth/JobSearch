@@ -3,22 +3,34 @@
   <Class Name="JobSearch.JobOpening">
     <Position X="3" Y="2.75" Width="1.5" />
     <Members>
+      <Field Name="activities" Hidden="true" />
+      <Field Name="additionalContacts" Hidden="true" />
       <Method Name="ClassInvariants" Hidden="true" />
       <Property Name="Id" Hidden="true" />
       <Method Name="JobOpening" Hidden="true" />
       <Method Name="ToString" Hidden="true" />
     </Members>
+    <AssociationLine Name="AdditionalContacts" Type="JobSearch.Contact" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="3.688" Y="4.43" />
+        <Point X="3.688" Y="5.029" />
+        <Point X="8.438" Y="5.029" />
+        <Point X="8.438" Y="4.623" />
+      </Path>
+    </AssociationLine>
     <TypeIdentifier>
-      <HashCode>hAACAAQAAAAAAEAEAAAAAFAAAAAAAAAACAAAIIAAIAI=</HashCode>
+      <HashCode>gAACAAAAAAAAAEAEAAAAADAAAAgAAAAACAAAIIAAIAA=</HashCode>
       <FileName>JobOpening.cs</FileName>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
       <Property Name="Activities" />
+      <Property Name="AdditionalContacts" />
     </ShowAsCollectionAssociation>
   </Class>
   <Class Name="JobSearch.Contact">
-    <Position X="8.75" Y="2.75" Width="1.5" />
+    <Position X="8.25" Y="2.75" Width="1.5" />
     <Members>
+      <Method Name="Contact" Hidden="true" />
       <Method Name="Equals" Hidden="true" />
       <Method Name="GetHashCode" Hidden="true" />
       <Property Name="Id" Hidden="true" />
@@ -52,8 +64,28 @@
     </ShowAsAssociation>
     <Lollipop Position="0.2" />
   </Class>
+  <Class Name="JobSearch.JobOpeningApplicationExtensions">
+    <Position X="5" Y="5.75" Width="1.5" />
+    <Members>
+      <Method Name="ClassInvariants" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAIABAAAAAACAAAABAAAAgAEAAAAAAAAAAAAAA=</HashCode>
+      <FileName>JobOpeningApplicationExtensions.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="JobSearch.JobOpeningInterviewExtensions">
+    <Position X="3" Y="5.75" Width="1.5" />
+    <Members>
+      <Method Name="ClassInvariants" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAIAAAAAAAACAAAABAAAAgAAAAAAAAAAAAAAAI=</HashCode>
+      <FileName>JobOpeningInterviewExtensions.cs</FileName>
+    </TypeIdentifier>
+  </Class>
   <Enum Name="JobSearch.ContactRole">
-    <Position X="8.75" Y="5.5" Width="1.5" />
+    <Position X="8.25" Y="5.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAgAAAAAA=</HashCode>
       <FileName>ContactRole.cs</FileName>

@@ -17,5 +17,23 @@ namespace JobSearch
             jobOpening = new JobOpening(42);
             Assert.That(jobOpening.Id, Is.EqualTo(42));
         }
+
+        /// <summary>
+        /// A test contact
+        /// </summary>
+        public Contact TestContact2
+        {
+            get
+            {
+                return new Contact()
+                {
+                    Name = "Sarah Billingsley",
+                    Email = "sarah.billingsley@wehirem.com",
+                    Phone = "8765 0641",
+                    Organization = "We Hire 'Em Recruiters"
+                };
+            }
+        }
+
     }
 }

@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JobSearch.Web.Tests", "JobS
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Database", "Database", "{488A264F-52FA-415B-846C-8EA10E6E75BA}"
 	ProjectSection(SolutionItems) = preProject
-		CreateDB.sql = CreateDB.sql
+		database\CreateDB.sql = database\CreateDB.sql
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JobSearch.Serialization", "JobSearch.Serialization\JobSearch.Serialization.csproj", "{2658F2AD-3E99-4654-ABEA-7AD16A1FC31B}"

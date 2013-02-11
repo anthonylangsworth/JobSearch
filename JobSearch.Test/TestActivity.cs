@@ -32,8 +32,36 @@ namespace JobSearch.Test
         [Test]
         public void TestCreation_NullContact()
         {
-            Assert.That(() => new Activity(0, DateTime.Now, TimeSpan.FromHours(1), null, null),
+            Assert.That(() => new Activity(0, DateTime.Now, TimeSpan.FromHours(1), null, "foo"),
                 Throws.TypeOf<ArgumentNullException>().And.Property("ParamName").EqualTo("contact"));
+        }
+
+        [Test]
+        public void TestCreation_NegativeDuration()
+        {
+            Assert.That(() => new Activity(0, DateTime.Now, TimeSpan.FromHours(-1), new Contact(), "foo"),
+                Throws.TypeOf<ArgumentException>().And.Property("ParamName").EqualTo("duration"));
+        }
+
+        [Test]
+        public void TestCreation_NullDescription()
+        {
+            Assert.That(() => new Activity(0, DateTime.Now, TimeSpan.FromHours(1), new Contact(), null),
+                Throws.TypeOf<ArgumentNullException>().And.Property("ParamName").EqualTo("description"));
+        }
+
+        [Test]
+        public void TestCreation_EmptyDescription()
+        {
+            Assert.That(() => new Activity(0, DateTime.Now, TimeSpan.FromHours(1), new Contact(), string.Empty),
+                Throws.TypeOf<ArgumentNullException>().And.Property("ParamName").EqualTo("description"));
+        }
+
+        [Test]
+        public void TestCreation_WhiteSpaceDescription()
+        {
+            Assert.That(() => new Activity(0, DateTime.Now, TimeSpan.FromHours(1), new Contact(), " "),
+                Throws.TypeOf<ArgumentNullException>().And.Property("ParamName").EqualTo("description"));
         }
     }
 }

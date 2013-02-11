@@ -22,11 +22,10 @@ namespace JobSearch.Test
             const string phone = "phone";
             const ContactRole role = ContactRole.HumanResources;
 
-            contact = new Contact()
+            contact = new Contact(id)
                 {
                     Name = name,
                     Email = email,
-                    Id = id,
                     Notes = notes,
                     Organization = organization,
                     Phone = phone,

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 
@@ -10,6 +11,28 @@ namespace JobSearch
     /// </summary>
     public class Contact : IEquatable<Contact>
     {
+        /// <summary>
+        /// Create a new <see cref="Contact"/>.
+        /// </summary>
+        public Contact()
+        {
+            // Do nothing
+        }
+
+        /// <summary>
+        /// Create a new <see cref="Contact"/> with the given ID.
+        /// </summary>
+        /// <param name="id">
+        /// The ID to use.
+        /// </param>
+        public Contact(int id)
+            : this()
+        {
+            Contract.Ensures(id == this.Id);
+
+            this.Id = id;
+        }
+
         /// <summary>
         /// The peron's name.
         /// </summary>
@@ -61,7 +84,7 @@ namespace JobSearch
         public int Id
         {
             get;
-            set;
+            private set;
         }
 
         /// <summary>
