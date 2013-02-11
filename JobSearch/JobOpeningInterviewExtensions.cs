@@ -80,6 +80,7 @@ namespace JobSearch
             Contract.Requires<ArgumentNullException>(!string.IsNullOrWhiteSpace(description), "description");
             Contract.Ensures(jobOpening.Url == Contract.OldValue(jobOpening.Url));
             Contract.Ensures(jobOpening.Title == Contract.OldValue(jobOpening.Title));
+            Contract.Ensures(jobOpening.Notes == Contract.OldValue(jobOpening.Notes));
             Contract.Ensures(jobOpening.Organization == Contract.OldValue(jobOpening.Organization));
             Contract.Ensures(jobOpening.AdditionalContacts.Equals(Contract.OldValue(jobOpening.AdditionalContacts)));
             Contract.Ensures(jobOpening.Activities.Count >= 2);

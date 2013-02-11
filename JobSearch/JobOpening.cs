@@ -39,7 +39,7 @@ namespace JobSearch
             Contract.Ensures(Url == null);
             Contract.Ensures(Title == null);
             Contract.Ensures(Organization == null);
-            Contract.EndContractBlock();
+            Contract.Ensures(Notes == null);
 
             additionalContacts = new List<Contact>();
             activities = new List<Activity>();
@@ -94,6 +94,14 @@ namespace JobSearch
         {
             get;
             set;
+        }
+
+        /// <summary>
+        /// User supplied notes (if any).
+        /// </summary>
+        public string Notes
+        {
+            get; set;
         }
 
         /// <summary>

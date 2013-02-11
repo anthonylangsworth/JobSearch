@@ -12,14 +12,14 @@
     </Members>
     <AssociationLine Name="AdditionalContacts" Type="JobSearch.Contact" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
       <Path>
-        <Point X="3.688" Y="4.43" />
+        <Point X="3.688" Y="4.623" />
         <Point X="3.688" Y="5.029" />
         <Point X="8.438" Y="5.029" />
         <Point X="8.438" Y="4.623" />
       </Path>
     </AssociationLine>
     <TypeIdentifier>
-      <HashCode>gAACAAAAAAAAAEAEAAAAADAAAAgAAAAACAAAIIAAIAA=</HashCode>
+      <HashCode>gAAiAAAAAAAAAEAEAAAAADAAAAgAAAAACAAAIIAAIAA=</HashCode>
       <FileName>JobOpening.cs</FileName>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>

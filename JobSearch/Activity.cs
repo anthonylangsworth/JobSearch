@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
+using JobSearch.Core;
 
 namespace JobSearch
 {
     /// <summary>
     /// An activity, such as an interview or follow-up.
     /// </summary>
-    public class Activity : IEquatable<Activity>
+    public class Activity : IEquatable<Activity>, IActivity
     {
         /// <summary>
         /// Create a new <see cref="Activity"/>.
@@ -128,7 +129,7 @@ namespace JobSearch
         /// <summary>
         /// The person involved in the activity.
         /// </summary>
-        public Contact Contact
+        public IContact Contact
         {
             get;
             private set;

@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
+using JobSearch.Core;
 
 namespace JobSearch
 {
     /// <summary>
     /// A person involved in a job search.
     /// </summary>
-    public class Contact : IEquatable<Contact>
+    public class Contact : IEquatable<Contact>, IContact
     {
         /// <summary>
         /// Create a new <see cref="Contact"/>.
