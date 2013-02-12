@@ -91,15 +91,6 @@ namespace JobSearch
         }
 
         /// <summary>
-        /// Class invariants.
-        /// </summary>
-        [ContractInvariantMethod]
-        private void ClassInvariants()
-        {
-            Contract.Invariant(Contact != null);
-        }
-
-        /// <summary>
         /// The date/time this activity starts. 
         /// </summary>
         public DateTime Start

@@ -61,6 +61,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\JobSearch.Core\JobSearch.Core.csproj">
+      <Project>{f612a20f-8cef-4987-bf5f-2759edcfb200}</Project>
+      <Name>JobSearch.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\JobSearch\JobSearch.csproj">
       <Project>{3CDE93E3-8F3B-4342-A835-127E45ECA02C}</Project>
       <Name>JobSearch</Name>

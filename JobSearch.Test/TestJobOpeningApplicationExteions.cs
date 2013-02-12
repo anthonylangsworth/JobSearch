@@ -28,7 +28,7 @@ namespace JobSearch.Test
                 JobOpeningApplicationExtensions.ApplicationDescription, true)),
                 "Missing application activity");
             Assert.That(jobOpening.Activities, Contains.Item(new Activity(
-                applicationTime + JobOpeningApplicationExtensions.FollowUpDelay,
+                applicationTime + JobOpeningApplicationExtensions.ApplicationFollowUpDelay,
                 JobOpeningApplicationExtensions.FollowUpDuration, contact,
                 JobOpeningApplicationExtensions.FollowUpDescription)),
                 "Missing followup activity");

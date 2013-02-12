@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Diagnostics.Contracts;
 
 namespace JobSearch.Core
 {
     /// <summary>
     /// A job search activity, such as applying for a job, an interview or a follow up.
     /// </summary>
+    [ContractClass(typeof(ActivityContract))]
     public interface IActivity
     {
         /// <summary>

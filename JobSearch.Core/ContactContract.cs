@@ -8,44 +8,44 @@ using System.Threading.Tasks;
 namespace JobSearch.Core
 {
     /// <summary>
-    /// A contact in a job search, such as a recruiter, HR representative or a hiring manager.
+    /// Code contracts for <see cref="IContact"/>.
     /// </summary>
-    [ContractClass(typeof(ContactContract))]
-    public interface IContact
+    [ContractClassFor(typeof(IContact))]
+    internal abstract class ContactContract : IContact
     {
         /// <summary>
         /// The peron's name.
         /// </summary>
-        string Name { get; set; }
+        public string Name { get; set; }
 
         /// <summary>
         /// Phone number.
         /// </summary>
-        string Phone { get; set; }
+        public string Phone { get; set; }
 
         /// <summary>
         /// E-mail address.
         /// </summary>
-        string Email { get; set; }
+        public string Email { get; set; }
 
         /// <summary>
         /// Free form notes.
         /// </summary>
-        string Notes { get; set; }
+        public string Notes { get; set; }
 
         /// <summary>
         /// The name of the peron's organization.
         /// </summary>
-        string Organization { get; set; }
+        public string Organization { get; set; }
 
         /// <summary>
         /// Unique ID of the person.
         /// </summary>
-        int Id { get; }
+        public int Id { get; private set;  }
 
         /// <summary>
         /// The contact role (e.g. recruiter, HR, hiring manager).
         /// </summary>
-        ContactRole Role { get; set; }
+        public ContactRole Role { get; set; }
     }
 }

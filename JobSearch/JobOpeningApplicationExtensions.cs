@@ -18,9 +18,9 @@ namespace JobSearch
         [ContractInvariantMethod]
         private static void ClassInvariants()
         {
-            Contract.Invariant(FollowUpDelay == FollowUpDelay.Duration());
-            Contract.Invariant(FollowUpDuration == FollowUpDuration.Duration());
-            Contract.Invariant(!string.IsNullOrWhiteSpace(FollowUpDescription));
+            Contract.Invariant(ApplicationFollowUpDelay == ApplicationFollowUpDelay.Duration());
+            Contract.Invariant(ApplicationFollowUpDuration == ApplicationFollowUpDuration.Duration());
+            Contract.Invariant(!string.IsNullOrWhiteSpace(ApplicationFollowUpDescription));
             Contract.Invariant(!string.IsNullOrWhiteSpace(ApplicationDescription));
         }
 
@@ -28,19 +28,19 @@ namespace JobSearch
         /// The time after an the follow up is scheduled.
         /// </summary>
         /// <seealso cref="Apply"/>
-        public static readonly TimeSpan FollowUpDelay = TimeSpan.FromDays(3);
+        public static readonly TimeSpan ApplicationFollowUpDelay = TimeSpan.FromDays(3);
 
         /// <summary>
         /// The duration of an follow up.
         /// </summary>
         /// <seealso cref="Apply"/>
-        public static readonly TimeSpan FollowUpDuration = TimeSpan.FromMinutes(15);
+        public static readonly TimeSpan ApplicationFollowUpDuration = TimeSpan.FromMinutes(15);
 
         /// <summary>
         /// The description of the follow up.
         /// </summary>
         /// <seealso cref="Apply"/>
-        public static readonly string FollowUpDescription =
+        public static readonly string ApplicationFollowUpDescription =
             "Application follow up. Reach out to the advertiser to ensure they have your details and answer any questions.";
 
         /// <summary>
@@ -66,6 +66,10 @@ namespace JobSearch
         /// <exception cref="ArgumentNullException">
         /// Neither <paramref name="jobOpening"/> nor <paramref name="contact"/> can be null.
         /// </exception>
+        /// <seealso cref="ApplicationFollowUpDelay"/>
+        /// <seealso cref="ApplicationFollowUpDescription"/>
+        /// <seealso cref="ApplicationFollowUpDuration"/>
+        /// <seealso cref="ApplicationDescription"/>
         public static void Apply(this JobOpening jobOpening, DateTime applicationTime, Contact contact)
         {
             Contract.Requires<ArgumentNullException>(jobOpening != null, "jobOpening");
@@ -79,10 +83,10 @@ namespace JobSearch
             Contract.Ensures(jobOpening.Activities.Count(a => a.Equals(new Activity(
                 applicationTime, TimeSpan.Zero, contact, "Applied.", true))) == 1);
             Contract.Ensures(jobOpening.Activities.Count(a => a.Equals(new Activity(
-                applicationTime + FollowUpDelay, FollowUpDuration, contact, FollowUpDescription))) == 1);
+                applicationTime + ApplicationFollowUpDelay, ApplicationFollowUpDuration, contact, ApplicationFollowUpDescription))) == 1);
 
             jobOpening.Activities.Add(new Activity(applicationTime, TimeSpan.Zero, contact, ApplicationDescription) { Completed = true });
-            jobOpening.Activities.Add(new Activity(applicationTime + FollowUpDelay, FollowUpDuration, contact, FollowUpDescription));
+            jobOpening.Activities.Add(new Activity(applicationTime + ApplicationFollowUpDelay, ApplicationFollowUpDuration, contact, ApplicationFollowUpDescription));
         }
     }
 }
