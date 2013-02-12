@@ -54,7 +54,7 @@
     <Compile Include="TestContact.cs" />
     <Compile Include="TestContacts.cs" />
     <Compile Include="TestJobOpening.cs" />
-    <Compile Include="TestJobOpeningApplicationExteions.cs" />
+    <Compile Include="TestJobOpeningApplicationExtensions.cs" />
     <Compile Include="TestJobOpeningInterviewExtensions.cs" />
   </ItemGroup>
   <ItemGroup>

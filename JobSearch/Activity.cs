@@ -55,7 +55,7 @@ namespace JobSearch
         /// The duration of the activity. This must be positive.
         /// </param>
         /// <param name="contact">
-        /// The <see cref="Contact"/> involved with the activity, including
+        /// The <see cref="IContact"/> involved with the activity, including
         /// contact details and address.
         /// </param>
         /// <param name="description">
@@ -72,7 +72,7 @@ namespace JobSearch
         /// <exception cref="ArgumentException">
         /// <paramref name="duration"/> must be positive.
         /// </exception>
-        public Activity(DateTime start, TimeSpan duration, Contact contact, string description, bool completed = false)
+        public Activity(DateTime start, TimeSpan duration, IContact contact, string description, bool completed = false)
         {
             Contract.Requires<ArgumentNullException>(contact != null, "contact");
             Contract.Requires<ArgumentException>(duration == duration.Duration(), "duration");

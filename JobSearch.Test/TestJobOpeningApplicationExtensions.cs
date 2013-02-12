@@ -8,7 +8,7 @@ using NUnit.Framework;
 namespace JobSearch.Test
 {
     [TestFixture]
-    public class TestJobOpeningApplicationExteions
+    public class TestJobOpeningApplicationExtensions
     {
         [Test]
         public void TestApply()
@@ -25,21 +25,13 @@ namespace JobSearch.Test
 
             Assert.That(jobOpening.Activities.Count(), Is.EqualTo(2), "Incorrect activity count");
             Assert.That(jobOpening.Activities, Contains.Item(new Activity(applicationTime, TimeSpan.Zero, contact, 
-                JobOpeningApplicationExtensions.ApplicationDescription, true)),
+                JobOpening.ApplicationDescription, true)),
                 "Missing application activity");
             Assert.That(jobOpening.Activities, Contains.Item(new Activity(
-                applicationTime + JobOpeningApplicationExtensions.ApplicationFollowUpDelay,
-                JobOpeningApplicationExtensions.FollowUpDuration, contact,
-                JobOpeningApplicationExtensions.FollowUpDescription)),
+                applicationTime + JobOpening.ApplicationFollowUpDelay,
+                JobOpening.ApplicationFollowUpDuration, contact,
+                JobOpening.ApplicationFollowUpDescription)),
                 "Missing followup activity");
-        }
-
-        [Test]
-        public void TestAddInterview_NullJobOpening()
-        {
-            JobOpening jobOpening = null;
-            Assert.That(() => jobOpening.Apply(DateTime.Now, TestContacts.PeterSmith),
-                Throws.TypeOf<ArgumentNullException>().And.Property("ParamName").EqualTo("jobOpening"));
         }
 
         [Test]

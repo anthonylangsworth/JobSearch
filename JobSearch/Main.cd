@@ -5,30 +5,26 @@
     <Members>
       <Field Name="activities" Hidden="true" />
       <Field Name="additionalContacts" Hidden="true" />
+      <Field Name="ApplicationDescription" Hidden="true" />
+      <Field Name="ApplicationFollowUpDelay" Hidden="true" />
+      <Field Name="ApplicationFollowUpDescription" Hidden="true" />
+      <Field Name="ApplicationFollowUpDuration" Hidden="true" />
       <Method Name="ClassInvariants" Hidden="true" />
       <Property Name="Id" Hidden="true" />
+      <Field Name="InterviewFollowUpDelay" Hidden="true" />
+      <Field Name="InterviewFollowUpDescription" Hidden="true" />
+      <Field Name="InterviewFollowUpDuration" Hidden="true" />
       <Method Name="JobOpening" Hidden="true" />
       <Method Name="ToString" Hidden="true" />
     </Members>
-    <AssociationLine Name="AdditionalContacts" Type="JobSearch.Contact" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
-      <Path>
-        <Point X="3.688" Y="4.623" />
-        <Point X="3.688" Y="5.029" />
-        <Point X="8.438" Y="5.029" />
-        <Point X="8.438" Y="4.623" />
-      </Path>
-    </AssociationLine>
     <TypeIdentifier>
-      <HashCode>gAAiAAAAAAAAAEAEAAAAADAAAAgAAAAACAAAIIAAIAA=</HashCode>
+      <HashCode>gEAiAAAAABAAAEAEAAAAADUAAAgAEAgACAAAIIgAICI=</HashCode>
       <FileName>JobOpening.cs</FileName>
     </TypeIdentifier>
-    <ShowAsCollectionAssociation>
-      <Property Name="Activities" />
-      <Property Name="AdditionalContacts" />
-    </ShowAsCollectionAssociation>
+    <Lollipop Position="0.2" />
   </Class>
   <Class Name="JobSearch.Contact">
-    <Position X="8.25" Y="2.75" Width="1.5" />
+    <Position X="7.5" Y="2.75" Width="1.5" />
     <Members>
       <Method Name="Contact" Hidden="true" />
       <Method Name="Equals" Hidden="true" />
@@ -40,56 +36,22 @@
       <HashCode>AAAiAAAAACAAAAAEkAAAAAQAAAAAAIAAAAAAIAAAIAA=</HashCode>
       <FileName>Contact.cs</FileName>
     </TypeIdentifier>
-    <ShowAsAssociation>
-      <Property Name="Role" />
-    </ShowAsAssociation>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="JobSearch.Activity">
-    <Position X="5.75" Y="2.75" Width="1.5" />
+    <Position X="5.25" Y="2.75" Width="1.5" />
     <Members>
       <Method Name="Activity" Hidden="true" />
-      <Method Name="ClassInvariants" Hidden="true" />
       <Method Name="Equals" Hidden="true" />
       <Method Name="GetHashCode" Hidden="true" />
       <Property Name="Id" Hidden="true" />
       <Method Name="ToString" Hidden="true" />
     </Members>
     <TypeIdentifier>
-      <HashCode>AAACAAAAACAiAAIEiAAAABAAAAAAAIAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAACAAAAACAiAAIEiAAAAAAAAAAAAIAAAAAAAAAAAAA=</HashCode>
       <FileName>Activity.cs</FileName>
     </TypeIdentifier>
-    <ShowAsAssociation>
-      <Property Name="Contact" />
-    </ShowAsAssociation>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="JobSearch.JobOpeningApplicationExtensions">
-    <Position X="5" Y="5.75" Width="1.5" />
-    <Members>
-      <Method Name="ClassInvariants" Hidden="true" />
-    </Members>
-    <TypeIdentifier>
-      <HashCode>AAAAAAAIABAAAAAACAAAABAAAAgAEAAAAAAAAAAAAAA=</HashCode>
-      <FileName>JobOpeningApplicationExtensions.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="JobSearch.JobOpeningInterviewExtensions">
-    <Position X="3" Y="5.75" Width="1.5" />
-    <Members>
-      <Method Name="ClassInvariants" Hidden="true" />
-    </Members>
-    <TypeIdentifier>
-      <HashCode>AAAAAAAIAAAAAAAACAAAABAAAAgAAAAAAAAAAAAAAAI=</HashCode>
-      <FileName>JobOpeningInterviewExtensions.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Enum Name="JobSearch.ContactRole">
-    <Position X="8.25" Y="5.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAgAAAAAA=</HashCode>
-      <FileName>ContactRole.cs</FileName>
-    </TypeIdentifier>
-  </Enum>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>
