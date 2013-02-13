@@ -113,6 +113,7 @@
     <Compile Include="ContactRole.cs" />
     <Compile Include="IActivity.cs" />
     <Compile Include="IContact.cs" />
+    <Compile Include="IContactRepository.cs" />
     <Compile Include="IJobOpening.cs" />
     <Compile Include="IRepository.cs" />
     <Compile Include="JobOpeningContract.cs" />

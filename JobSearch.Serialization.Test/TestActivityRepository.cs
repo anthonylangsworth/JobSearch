@@ -4,7 +4,7 @@ using NUnit.Framework;
 namespace JobSearch.Serialization.Test
 {
     [TestFixture]
-    public class UnitTest1
+    public class TestActivityRepository
     {
         [Test]
         public void TestMethod1()

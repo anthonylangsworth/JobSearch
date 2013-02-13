@@ -51,6 +51,7 @@
     <Compile Include="Contact.cs">
       <DependentUpon>JobSearch.tt</DependentUpon>
     </Compile>
+    <Compile Include="ContactRepository.cs" />
     <Compile Include="JobOpening.cs">
       <DependentUpon>JobSearch.tt</DependentUpon>
     </Compile>
@@ -96,6 +97,12 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\JobSearch.Core\JobSearch.Core.csproj">
+      <Project>{F612A20F-8CEF-4987-BF5F-2759EDCFB200}</Project>
+      <Name>JobSearch.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
