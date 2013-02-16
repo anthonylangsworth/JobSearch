@@ -117,8 +117,8 @@
     <Compile Include="IJobOpening.cs" />
     <Compile Include="IRepository.cs" />
     <Compile Include="JobOpeningContract.cs" />
-    <Compile Include="MemoryRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RepositoryContract.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

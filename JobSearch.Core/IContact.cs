@@ -11,7 +11,7 @@ namespace JobSearch.Core
     /// A contact in a job search, such as a recruiter, HR representative or a hiring manager.
     /// </summary>
     [ContractClass(typeof(ContactContract))]
-    public interface IContact
+    public interface IContact: IEquatable<IContact>
     {
         /// <summary>
         /// The peron's name.

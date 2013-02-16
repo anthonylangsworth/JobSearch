@@ -10,7 +10,7 @@ namespace JobSearch
     /// <summary>
     /// A person involved in a job search.
     /// </summary>
-    public class Contact : IEquatable<Contact>, IContact
+    public class Contact : IContact
     {
         /// <summary>
         /// Create a new <see cref="Contact"/>.
@@ -104,11 +104,11 @@ namespace JobSearch
         /// true if the current object is equal to the <paramref name="other"/> parameter; otherwise, false.
         /// </returns>
         /// <param name="other">An object to compare with this object.</param>
-        public bool Equals(Contact other)
+        public bool Equals(IContact other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return string.Equals(Name, other.Name) && string.Equals(Phone, other.Phone) && string.Equals(Email, other.Email) && string.Equals(Notes, other.Notes) && string.Equals(Organization, other.Organization) && Id == other.Id && Role == other.Role;
+            return string.Equals(Name, other.Name) && string.Equals(Phone, other.Phone) && string.Equals(Notes, other.Notes) && Id == other.Id && string.Equals(Organization, other.Organization) && Role == other.Role && string.Equals(Email, other.Email);
         }
 
         /// <summary>
@@ -138,11 +138,11 @@ namespace JobSearch
             {
                 int hashCode = (Name != null ? Name.GetHashCode() : 0);
                 hashCode = (hashCode*397) ^ (Phone != null ? Phone.GetHashCode() : 0);
-                hashCode = (hashCode*397) ^ (Email != null ? Email.GetHashCode() : 0);
                 hashCode = (hashCode*397) ^ (Notes != null ? Notes.GetHashCode() : 0);
-                hashCode = (hashCode*397) ^ (Organization != null ? Organization.GetHashCode() : 0);
                 hashCode = (hashCode*397) ^ Id;
+                hashCode = (hashCode*397) ^ (Organization != null ? Organization.GetHashCode() : 0);
                 hashCode = (hashCode*397) ^ (int) Role;
+                hashCode = (hashCode*397) ^ (Email != null ? Email.GetHashCode() : 0);
                 return hashCode;
             }
         }

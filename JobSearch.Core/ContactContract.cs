@@ -47,5 +47,12 @@ namespace JobSearch.Core
         /// The contact role (e.g. recruiter, HR, hiring manager).
         /// </summary>
         public ContactRole Role { get; set; }
+
+        /// <summary>
+        /// Are two <see cref="IContact"/>s equal?
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        public abstract bool Equals(IContact other);
     }
 }

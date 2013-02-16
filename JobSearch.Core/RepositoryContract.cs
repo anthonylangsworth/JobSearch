@@ -1,34 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using JobSearch.Core;
 
-namespace JobSearch.Serialization
+namespace JobSearch.Core
 {
     /// <summary>
-    /// A repository for <see cref="Contact"/>.
+    /// Contracts for <see cref="IRepository{TId, TItem}"/>.
     /// </summary>
-    public class ContactRepository: EntityFrameworkRepository<JobSearch, int, IContact>
+    [ContractClassFor(typeof(IRepository<,>))]
+    public abstract class RepositoryContract<TId, TItem>: IRepository<TId, TItem>
+        where TItem : class, IEquatable<TItem>
     {
-        private readonly JobSearch jobSearch;
-
         /// <summary>
-        /// Create a <see cref="ContactRepository"/>.
+        /// Class invariants.
         /// </summary>
-        public ContactRepository()
+        [ContractInvariantMethod]
+        private void ClassInariants()
         {
-            jobSearch = new JobSearch();
+            Contract.Invariant(GetItemId != null);
         }
 
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
-        public void Dispose()
-        {
-            jobSearch.Dispose();
-        }
+        public abstract void Dispose();
 
         /// <summary>
         /// Does an item with the given <paramref name="id"/> exist in the repository?
@@ -39,66 +37,72 @@ namespace JobSearch.Serialization
         /// <returns>
         /// True if it exists, false otherwise.
         /// </returns>
-        public bool Exists(int id)
+        public bool Exists(TId id)
         {
-            throw new NotImplementedException();
+            // Contract.Ensures(Contract.Result<bool>().Equals(GetAll().Any(item => GetItemId(item).Equals(id))));
+            Contract.Ensures(Contract.OldValue<bool>(Dirty).Equals(Dirty));
+            return false;
         }
 
         /// <summary>
         /// Delegate to get the item's unique identifier.
         /// </summary>
-        public Func<IContact, int> GetItemId { get; private set; }
+        public abstract Func<TItem, TId> GetItemId
+        {
+            get; 
+        }
 
         /// <summary>
         /// Get all items.
         /// </summary>
         /// <returns>
-        /// The locations in the repository.
+        /// The TItems in the repository.
         /// </returns>
-        public IQueryable<IContact> GetAll()
+        public IQueryable<TItem> GetAll()
         {
-            return jobSearch.Contacts.AsQueryable();
+            Contract.Ensures(Contract.Result<IQueryable<TId>>() != null);
+            Contract.Ensures(Contract.OldValue<bool>(Dirty) == Dirty);
+            return null;
         }
 
         /// <summary>
-        /// Retrieve the location identified by <paramref name="id"/>.
+        /// Retrieve the TItem identified by <paramref name="id"/>.
         /// </summary>
         /// <param name="id">
         /// The ID of the item to load.
         /// </param>
         /// <returns>
-        /// The I<see cref="IContact"/> or null,
+        /// The <typeparamref name="TItem"/> for <paramref name="id"/> or null
         /// if no item matches.
         /// </returns>
-        public IContact Get(int id)
+        public TItem Get(TId id)
         {
-            return jobSearch.Contacts.FirstOrDefault(c => c.Id == id);
+            Contract.Ensures(Exists(id) ?
+                Contract.Result<TItem>() != null && GetItemId(Contract.Result<TItem>()).Equals(id)
+                : Contract.Result<TItem>() == null);
+            Contract.Ensures(Contract.OldValue<bool>(Dirty) == Dirty);
+            return null;
         }
 
         /// <summary>
-        /// Create a new location.
+        /// Create a new TItem.
         /// </summary>
         /// <param name="item">
         /// The item to create.
         /// </param>
-        /// <returns>
-        /// The ID of the new item (if any).
-        /// </returns>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="item"/> csannot be null.
+        /// <paramref name="item"/> cannot be null.
         /// </exception>
         /// <exception cref="ArgumentException">
         /// <paramref name="item"/> already exists or is otherwise invalid.
         /// </exception>
-        public void Create(IContact item)
+        public void Create(TItem item)
         {
-            Contact contact;
-            contact = item as Contact;
-            if (contact == null)
-            {
-                throw new ArgumentException("Not a Contact", "item");
-            }
-            jobSearch.Contacts.Add(contact);
+            Contract.Requires<ArgumentNullException>(item != null, "item");
+            Contract.Requires<ArgumentException>(!Exists(GetItemId(item)), "item");
+            Contract.Ensures(Exists(GetItemId(item)));
+            Contract.Ensures(Get(GetItemId(item)).Equals(item));
+            Contract.Ensures(Dirty);
         }
 
         /// <summary>
@@ -113,25 +117,13 @@ namespace JobSearch.Serialization
         /// <exception cref="ArgumentException">
         /// <paramref name="item"/> already exists or is otherwise invalid.
         /// </exception>
-        public void Update(IContact item)
+        public void Update(TItem item)
         {
-            Contact oldContact;
-            Contact newContact;
-
-            oldContact = jobSearch.Contacts.FirstOrDefault(c => c.Id == item.Id);
-            if(oldContact == null)
-            {
-                throw new ArgumentException("Not found", "item");
-            }
-
-            newContact = item as Contact;
-            if (newContact == null)
-            {
-                throw new ArgumentException();
-            }
-
-            jobSearch.Contacts.Remove(oldContact);
-            jobSearch.Contacts.Add(newContact);
+            Contract.Requires<ArgumentNullException>(item != null, "item");
+            Contract.Requires<ArgumentException>(Exists(GetItemId(item)), "item");
+            Contract.Ensures(Exists(GetItemId(item)));
+            Contract.Ensures(Get(GetItemId(item)).Equals(item));
+            Contract.Ensures(Dirty);
         }
 
         /// <summary>
@@ -143,17 +135,11 @@ namespace JobSearch.Serialization
         /// <exception cref="ArgumentException">
         /// An item identified by <paramref name="id"/> does not exist.
         /// </exception>
-        public void Delete(int id)
+        public void Delete(TId id)
         {
-            Contact contact;
-
-            contact = jobSearch.Contacts.FirstOrDefault(c => c.Id == id);
-            if (contact == null)
-            {
-                throw new ArgumentException("Not found", "id");    
-            }
-
-            jobSearch.Contacts.Remove(contact);
+            Contract.Requires<ArgumentException>(Exists(id), "item");
+            Contract.Ensures(!Exists(id));
+            Contract.Ensures(Dirty);
         }
 
         /// <summary>
@@ -161,13 +147,16 @@ namespace JobSearch.Serialization
         /// </summary>
         public void Save()
         {
-            jobSearch.SaveChanges();
+            Contract.Ensures(!Dirty);
         }
 
         /// <summary>
         /// Are there unsaved changes?
         /// </summary>
         /// <seealso cref="IRepository{TId,TItem}.Save"/>
-        public bool Dirty { get; private set; }
+        public abstract bool Dirty
+        {
+            get;
+        }
     }
 }
