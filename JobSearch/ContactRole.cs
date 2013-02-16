@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace JobSearch.Core
+namespace JobSearch
 {
     /// <summary>
-    /// A <see cref="IContact"/>'s role.
+    /// A <see cref="Contact"/>'s role.
     /// </summary>
     public enum ContactRole
     {
@@ -21,6 +21,6 @@ namespace JobSearch.Core
         /// <summary>
         /// A hiring manager.
         /// </summary>
-        HiringManager,
+        HiringManager
     }
 }

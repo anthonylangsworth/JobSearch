@@ -7,8 +7,8 @@
     <ProjectGuid>{F612A20F-8CEF-4987-BF5F-2759EDCFB200}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>JobSearch.Core</RootNamespace>
-    <AssemblyName>JobSearch.Core</AssemblyName>
+    <RootNamespace>JobSearch.Interfaces</RootNamespace>
+    <AssemblyName>JobSearch.Interfaces</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <CodeContractsAssemblyMode>1</CodeContractsAssemblyMode>
@@ -22,7 +22,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <DocumentationFile>bin\Debug\JobSearch.Core.XML</DocumentationFile>
+    <DocumentationFile>bin\Debug\JobSearch.Interfaces.xml</DocumentationFile>
     <CodeContractsEnableRuntimeChecking>True</CodeContractsEnableRuntimeChecking>
     <CodeContractsRuntimeOnlyPublicSurface>False</CodeContractsRuntimeOnlyPublicSurface>
     <CodeContractsRuntimeThrowOnFailure>True</CodeContractsRuntimeThrowOnFailure>
@@ -64,7 +64,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <DocumentationFile>bin\Release\JobSearch.Core.XML</DocumentationFile>
+    <DocumentationFile>bin\Release\JobSearch.Interfaces.xml</DocumentationFile>
     <CodeContractsEnableRuntimeChecking>True</CodeContractsEnableRuntimeChecking>
     <CodeContractsRuntimeOnlyPublicSurface>False</CodeContractsRuntimeOnlyPublicSurface>
     <CodeContractsRuntimeThrowOnFailure>True</CodeContractsRuntimeThrowOnFailure>
@@ -108,17 +108,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ActivityContract.cs" />
-    <Compile Include="ContactContract.cs" />
-    <Compile Include="ContactRole.cs" />
-    <Compile Include="IActivity.cs" />
-    <Compile Include="IContact.cs" />
     <Compile Include="IContactRepository.cs" />
-    <Compile Include="IJobOpening.cs" />
     <Compile Include="IRepository.cs" />
-    <Compile Include="JobOpeningContract.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RepositoryContract.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\JobSearch\JobSearch.csproj">
+      <Project>{3cde93e3-8f3b-4342-a835-127e45eca02c}</Project>
+      <Name>JobSearch</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

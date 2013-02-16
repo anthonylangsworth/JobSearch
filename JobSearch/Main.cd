@@ -21,7 +21,6 @@
       <HashCode>gEAiAAAAABAAAEAEAAAAADUAAAgAEAgACAAAIIgAICI=</HashCode>
       <FileName>JobOpening.cs</FileName>
     </TypeIdentifier>
-    <Lollipop Position="0.2" />
   </Class>
   <Class Name="JobSearch.Contact">
     <Position X="7.5" Y="2.75" Width="1.5" />

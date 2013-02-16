@@ -10,9 +10,7 @@ namespace JobSearch.Serialization.Test
         [Test]
         public void TestCreation()
         {
-            EntityFrameworkRepository<JobSearch, int, string> repository;
-
-            repository = new EntityFrameworkRepository<JobSearch, int, string>();
+            Assert.DoesNotThrow(() => new EntityFrameworkRepository<JobSearchContext, int, Contact>());
         }
     }
 }

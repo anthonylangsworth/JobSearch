@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace JobSearch.Serialization
 {
     /// <summary>
-    /// Helper methods for <see cref="EFRepository"/>.
+    /// Helper methods for <see cref="EntityFrameworkRepository{TDbContext,TId,TItem,TInterface}"/>.
     /// </summary>
     internal static class EntityFrameworkRepositoryHelper
     {
@@ -81,9 +81,9 @@ namespace JobSearch.Serialization
 
             idPropertyGetMethods = typeof (TItem)
                 .GetProperties(BindingFlags.GetProperty | BindingFlags.Public | BindingFlags.Instance)
+                .Where(pi => pi.Name.Equals(propertyName, StringComparison.InvariantCultureIgnoreCase))
                 .Select(pi => pi.GetGetMethod())
-                .Where(gm => gm.ReturnType == typeof (TId) 
-                    && gm.Name.Equals(propertyName, StringComparison.InvariantCultureIgnoreCase));
+                .Where(gm => gm.ReturnType == typeof (TId));
             if (!idPropertyGetMethods.Any())
             {
                 throw new InvalidOperationException(

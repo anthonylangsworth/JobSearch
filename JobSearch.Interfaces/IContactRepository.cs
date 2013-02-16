@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace JobSearch.Core
+namespace JobSearch.Interfaces
 {
     /// <summary>
-    /// An <see cref="IContact"/> repository.
+    /// An <see cref="Contact"/> repository.
     /// </summary>
-    public interface IContactRepository: IRepository<int, IContact>
+    public interface IContactRepository: IRepository<int, Contact>
     {
         // No members
     }

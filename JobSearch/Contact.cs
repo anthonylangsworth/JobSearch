@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
-using JobSearch.Core;
 
 namespace JobSearch
 {
     /// <summary>
     /// A person involved in a job search.
     /// </summary>
-    public class Contact : IContact
+    public class Contact: IEquatable<Contact>
     {
         /// <summary>
         /// Create a new <see cref="Contact"/>.
@@ -104,7 +103,7 @@ namespace JobSearch
         /// true if the current object is equal to the <paramref name="other"/> parameter; otherwise, false.
         /// </returns>
         /// <param name="other">An object to compare with this object.</param>
-        public bool Equals(IContact other)
+        public bool Equals(Contact other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;

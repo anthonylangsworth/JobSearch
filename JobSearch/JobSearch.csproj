@@ -104,19 +104,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Activity.cs" />
+    <Compile Include="ContactRole.cs" />
     <Compile Include="JobOpening.cs" />
     <Compile Include="Contact.cs" />
+    <Compile Include="JobOpeningApplicationExtensions.cs" />
+    <Compile Include="JobOpeningInterviewExtensions.cs" />
     <Compile Include="Search.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Main.cd" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\JobSearch.Core\JobSearch.Core.csproj">
-      <Project>{f612a20f-8cef-4987-bf5f-2759edcfb200}</Project>
-      <Name>JobSearch.Core</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

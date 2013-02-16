@@ -113,7 +113,7 @@
     <Compile Include="ContactRepository.cs" />
     <Compile Include="EntityFrameworkRepository.cs" />
     <Compile Include="EntityFrameworkRepositoryHelper.cs" />
-    <Compile Include="JobSearch.cs" />
+    <Compile Include="JobSearchContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -124,9 +124,9 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\JobSearch.Core\JobSearch.Core.csproj">
-      <Project>{F612A20F-8CEF-4987-BF5F-2759EDCFB200}</Project>
-      <Name>JobSearch.Core</Name>
+    <ProjectReference Include="..\JobSearch.Interfaces\JobSearch.Interfaces.csproj">
+      <Project>{f612a20f-8cef-4987-bf5f-2759edcfb200}</Project>
+      <Name>JobSearch.Interfaces</Name>
     </ProjectReference>
     <ProjectReference Include="..\JobSearch\JobSearch.csproj">
       <Project>{3CDE93E3-8F3B-4342-A835-127E45ECA02C}</Project>

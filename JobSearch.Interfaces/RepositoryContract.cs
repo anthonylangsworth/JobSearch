@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace JobSearch.Core
+namespace JobSearch.Interfaces
 {
     /// <summary>
     /// Contracts for <see cref="IRepository{TId, TItem}"/>.

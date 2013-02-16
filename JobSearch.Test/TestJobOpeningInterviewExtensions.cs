@@ -31,9 +31,9 @@ namespace JobSearch.Test
             Assert.That(jobOpening.Activities, Contains.Item(new Activity(start, duration, contact, description)),
                 "Missing interview activity");
             Assert.That(jobOpening.Activities, Contains.Item(new Activity(
-                start + JobOpening.InterviewFollowUpDelay,
-                 JobOpening.InterviewFollowUpDuration, contact,
-                 JobOpening.InterviewFollowUpDescription)),
+                start + JobOpeningInterviewExtensions.FollowUpDelay,
+                 JobOpeningInterviewExtensions.FollowUpDuration, contact,
+                 JobOpeningInterviewExtensions.FollowUpDescription)),
                 "Missing followup activity");
         }
 

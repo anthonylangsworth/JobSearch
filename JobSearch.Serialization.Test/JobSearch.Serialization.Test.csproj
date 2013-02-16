@@ -57,9 +57,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\JobSearch.Core\JobSearch.Core.csproj">
-      <Project>{f612a20f-8cef-4987-bf5f-2759edcfb200}</Project>
-      <Name>JobSearch.Core</Name>
+    <ProjectReference Include="..\JobSearch.Interfaces\JobSearch.Interfaces.csproj">
+      <Project>{F612A20F-8CEF-4987-BF5F-2759EDCFB200}</Project>
+      <Name>JobSearch.Interfaces</Name>
     </ProjectReference>
     <ProjectReference Include="..\JobSearch.Serialization\JobSearch.Serialization.csproj">
       <Project>{2658f2ad-3e99-4654-abea-7ad16a1fc31b}</Project>

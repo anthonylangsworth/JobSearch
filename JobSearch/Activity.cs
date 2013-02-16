@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
-using JobSearch.Core;
 
 namespace JobSearch
 {
     /// <summary>
     /// An activity, such as an interview or follow-up.
     /// </summary>
-    public class Activity : IEquatable<Activity>, IActivity
+    public class Activity : IEquatable<Activity>
     {
         /// <summary>
         /// Create a new <see cref="Activity"/>.
@@ -55,7 +54,7 @@ namespace JobSearch
         /// The duration of the activity. This must be positive.
         /// </param>
         /// <param name="contact">
-        /// The <see cref="IContact"/> involved with the activity, including
+        /// The <see cref="Contact"/> involved with the activity, including
         /// contact details and address.
         /// </param>
         /// <param name="description">
@@ -72,7 +71,7 @@ namespace JobSearch
         /// <exception cref="ArgumentException">
         /// <paramref name="duration"/> must be positive.
         /// </exception>
-        public Activity(DateTime start, TimeSpan duration, IContact contact, string description, bool completed = false)
+        public Activity(DateTime start, TimeSpan duration, Contact contact, string description, bool completed = false)
         {
             Contract.Requires<ArgumentNullException>(contact != null, "contact");
             Contract.Requires<ArgumentException>(duration == duration.Duration(), "duration");
@@ -88,6 +87,18 @@ namespace JobSearch
             this.Description = description;
             this.Duration = duration;
             this.Completed = completed;
+        }
+
+        /// <summary>
+        /// Class invariants.
+        /// </summary>
+        [ContractInvariantMethod]
+        private void ClassInvariants()
+        {
+            Contract.Invariant(Contact != null,
+                "Contact cannot be null");
+            Contract.Invariant(Duration == Duration.Duration(),
+                "Duration must be positive");
         }
 
         /// <summary>
@@ -120,7 +131,7 @@ namespace JobSearch
         /// <summary>
         /// The person involved in the activity.
         /// </summary>
-        public IContact Contact
+        public Contact Contact
         {
             get;
             private set;

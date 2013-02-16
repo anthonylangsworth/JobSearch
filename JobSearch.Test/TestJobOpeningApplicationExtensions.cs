@@ -25,12 +25,12 @@ namespace JobSearch.Test
 
             Assert.That(jobOpening.Activities.Count(), Is.EqualTo(2), "Incorrect activity count");
             Assert.That(jobOpening.Activities, Contains.Item(new Activity(applicationTime, TimeSpan.Zero, contact, 
-                JobOpening.ApplicationDescription, true)),
+                JobOpeningApplicationExtensions.ApplicationDescription, true)),
                 "Missing application activity");
             Assert.That(jobOpening.Activities, Contains.Item(new Activity(
-                applicationTime + JobOpening.ApplicationFollowUpDelay,
-                JobOpening.ApplicationFollowUpDuration, contact,
-                JobOpening.ApplicationFollowUpDescription)),
+                applicationTime + JobOpeningApplicationExtensions.FollowUpDelay,
+                JobOpeningApplicationExtensions.FollowUpDuration, contact,
+                JobOpeningApplicationExtensions.FollowUpDescription)),
                 "Missing followup activity");
         }
 

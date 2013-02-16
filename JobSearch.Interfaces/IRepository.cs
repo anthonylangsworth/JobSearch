@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace JobSearch.Core
+namespace JobSearch.Interfaces
 {
     /// <summary>
     /// A repository for loading or saving <typeparamref name="TItem"/>s, each 
@@ -15,7 +15,7 @@ namespace JobSearch.Core
     /// The type of identifier for <typeparamref name="TItem"/>.
     /// </typeparam>
     /// <typeparam name="TItem">
-    /// The object type the repository loads and saves.
+    /// The class exposed by the repository.
     /// </typeparam>
     [ContractClass(typeof(RepositoryContract<,>))]
     public interface IRepository<TId, TItem>: IDisposable
@@ -46,7 +46,7 @@ namespace JobSearch.Core
         /// Get all items.
         /// </summary>
         /// <returns>
-        /// The TItems in the repository.
+        /// The <typeparamref name="TItem"/>s in the repository.
         /// </returns>
         [Pure]
         IQueryable<TItem> GetAll();
