@@ -113,7 +113,11 @@ namespace JobSearch.Serialization
         [Pure]
         public bool Exists(TId id)
         {
-            return GetItemDbSet().Any(item => GetItemId(item).Equals(id));
+            Expression<Func<TItem, bool>> expression = item => GetItemId(item).Equals(id);
+
+            // return GetItemDbSet().Any(item => GetItemId(item).Equals(id));
+            // TODO: Pass in property name
+            return GetItemDbSet().Any(EntityFrameworkRepositoryHelper.GetExistsExpression<TItem, TId>(id, "Id"));
         }
 
         /// <summary>

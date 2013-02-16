@@ -74,7 +74,7 @@ namespace JobSearch
         /// <summary>
         /// URL for the job advertisement (if any).
         /// </summary>
-        public Uri Url
+        public string Url
         {
             get;
             set;

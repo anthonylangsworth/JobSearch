@@ -99,5 +99,29 @@ namespace JobSearch.Serialization
 
             return item => (TId)idPropertyGetMethods.First().Invoke(item, new object[0]);
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="TItem"></typeparam>
+        /// <typeparam name="TId"></typeparam>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        internal static Expression<Func<TItem, bool>> GetExistsExpression<TItem, TId>(TId id, string propertyName)
+        {
+            ParameterExpression parameter;
+
+            // Must be same instance (e.g. http://msdn.microsoft.com/en-us/library/bb882637.aspx)
+            parameter = Expression.Parameter(typeof (TItem), "item");
+
+            return 
+                Expression.Lambda<Func<TItem, bool>>(
+                    Expression.Equal(
+                        Expression.MakeMemberAccess(
+                            parameter, 
+                            typeof(TItem).GetProperty(propertyName)),
+                        Expression.Constant(id)),
+                    new[] { parameter });
+        }
     }
 }
