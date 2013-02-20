@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace JobSearch.Serialization
 {
     /// <summary>
-    /// Helper methods for <see cref="EntityFrameworkRepository{TDbContext,TId,TItem,TInterface}"/>.
+    /// Helper methods for <see cref="EntityFrameworkRepository{TDbContext,TId,TItem}"/>.
     /// </summary>
     internal static class EntityFrameworkRepositoryHelper
     {
@@ -20,11 +20,14 @@ namespace JobSearch.Serialization
         /// find a public instance property that returns a <see cref="DbSet{TItem}"/> and
         /// return a <see cref="Func{T}"/> that returns the result.
         /// </summary>
+        /// <typeparam name="TDbContext">
+        /// The type of <see cref="DbContext"/> used.
+        /// </typeparam>
         /// <typeparam name="TItem">
         /// The type of the property to look for.
         /// </typeparam>
         /// <param name="dbContext">
-        /// The <see cref="TDbContext"/> (usually a derived or subclass of TDbContext)
+        /// The <typeparamref name="TDbContext"/> (usually a derived or subclass of TDbContext)
         /// tp examine.
         /// </param>
         /// <returns>
@@ -34,7 +37,7 @@ namespace JobSearch.Serialization
         /// <paramref name="dbContext"/> cannot be null.
         /// </exception>
         /// <exception cref="InvalidOperationException">
-        /// Zero or multiple properties exist on <see cref="dbContext"/>
+        /// Zero or multiple matching properties exist on <paramref name="dbContext"/>.
         /// </exception>
         internal static Func<DbSet<TItem>> GetDbSet<TDbContext, TItem>(TDbContext dbContext)
             where TDbContext : DbContext
@@ -101,14 +104,30 @@ namespace JobSearch.Serialization
         }
 
         /// <summary>
-        /// 
+        /// Return an <see cref="Expression"/> that can be used in a LINQ to entities
+        /// query that matches the property<paramref name="propertyName"/> on an item
+        /// of type <typeparamref name="TItem"/>.
         /// </summary>
-        /// <typeparam name="TItem"></typeparam>
-        /// <typeparam name="TId"></typeparam>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        internal static Expression<Func<TItem, bool>> GetExistsExpression<TItem, TId>(TId id, string propertyName)
+        /// <typeparam name="TItem">
+        /// The type of item the property is called on.
+        /// </typeparam>
+        /// <typeparam name="TId">
+        /// The property type.
+        /// </typeparam>
+        /// <param name="id">
+        /// The ID to match.
+        /// </param>
+        /// <param name="propertyName">
+        /// The name of the property to match. This cannot be null, empty or whitespace.
+        /// </param>
+        /// <returns>
+        /// An expression that can be used in a LINQ query.
+        /// </returns>
+        internal static Expression<Func<TItem, bool>> GetIdMatchesExpression<TItem, TId>(TId id, string propertyName)
         {
+            Contract.Requires<ArgumentNullException>(!string.IsNullOrEmpty(propertyName));
+            Contract.Ensures(Contract.Result<Expression<Func<TItem, TId>>>() != null);
+
             ParameterExpression parameter;
 
             // Must be same instance (e.g. http://msdn.microsoft.com/en-us/library/bb882637.aspx)

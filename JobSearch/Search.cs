@@ -15,6 +15,5 @@ namespace JobSearch
         /// Upcoming activities.
         /// </summary>
         public IEnumerable<Activity> Activities;
-
     }
 }

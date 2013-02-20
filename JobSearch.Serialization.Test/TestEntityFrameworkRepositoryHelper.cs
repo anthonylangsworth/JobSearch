@@ -17,7 +17,7 @@ namespace JobSearch.Serialization.Test
         {
             Expression<Func<Contact, bool>> expression;
 
-            expression = EntityFrameworkRepositoryHelper.GetExistsExpression<Contact, int>(42, "Id");
+            expression = EntityFrameworkRepositoryHelper.GetIdMatchesExpression<Contact, int>(42, "Id");
 
             Assert.That(expression.ToString(), Is.EqualTo("item => (item.Id == 42)"));
         }

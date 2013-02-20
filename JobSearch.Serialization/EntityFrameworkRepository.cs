@@ -22,7 +22,7 @@ namespace JobSearch.Serialization
     /// The type of the <see cref="System.Data.Entity.DbContext"/>.
     /// </typeparam>
     /// <typeparam name="TId">
-    /// The type of the unique identifier of <see cref="TItem"/>.
+    /// The type of the unique identifier of <typeparamref name="TItem"/>.
     /// </typeparam>
     /// <typeparam name="TItem">
     /// The item type stored in the repository.
@@ -32,15 +32,22 @@ namespace JobSearch.Serialization
         where TItem : class, IEquatable<TItem>
     {
         /// <summary>
+        /// The property name on TItem of type <typeparamref name="TId "/>that returns a unique
+        /// identifier. Future versions should use a list, including additional entries
+        /// like typeof(TItem).Name, and store the property chosen in a field or property.
+        /// </summary>
+        private readonly string propertyName = "Id";
+
+        /// <summary>
         /// Create a new <see cref="EntityFrameworkRepository{TDbContext, TId, TItem}"/>.
         /// </summary>
         /// <param name="dbContext">
-        /// The <see cref="TDbContext"/> to use. If null, a new DbContext will be creatd.
+        /// The <typeparamref name="TDbContext"/> to use. If null, a new DbContext will be creatd.
         /// </param>
         /// <exception cref="InvalidOperationException">
         /// Either a property on <typeparamref name="TDbContext"/> that returns a
         /// <see cref="DbSet{TItem}"/> does not exist or there was no property 
-        /// called "Id" on <see cref="TItem"/> of type <see cref="TId"/>.
+        /// called "Id" on <typeparamref name="TItem"/> of type <typeparamref name="TId"/>.
         /// </exception>
         public EntityFrameworkRepository(TDbContext dbContext = null)
         {
@@ -52,7 +59,7 @@ namespace JobSearch.Serialization
 
             DbContext = dbContext ?? new TDbContext();
             GetItemDbSet = EntityFrameworkRepositoryHelper.GetDbSet<TDbContext, TItem>(DbContext);
-            GetItemId = EntityFrameworkRepositoryHelper.GetId<TItem, TId>();
+            GetItemId = EntityFrameworkRepositoryHelper.GetId<TItem, TId>(propertyName);
             Dirty = false;
         }
 
@@ -75,7 +82,7 @@ namespace JobSearch.Serialization
         }
 
         /// <summary>
-        /// The <see cref="TDbContext"/> used.
+        /// The <typeparamref name="TDbContext"/> used.
         /// </summary>
         public TDbContext DbContext
         {
@@ -102,7 +109,7 @@ namespace JobSearch.Serialization
         }
 
         /// <summary>
-        /// Does an item with the given <see cref="TId"/> already exist?
+        /// Does an item with the given <typeparamref name="TId"/> already exist?
         /// </summary>
         /// <param name="id">
         /// The ID to check.
@@ -113,11 +120,12 @@ namespace JobSearch.Serialization
         [Pure]
         public bool Exists(TId id)
         {
-            Expression<Func<TItem, bool>> expression = item => GetItemId(item).Equals(id);
-
+            // Invoking a lambda or delegate is not allowed within a LINQ to Entities expression
+            // Expression<Func<TItem, bool>> expression = item => GetItemId(item).Equals(id);
             // return GetItemDbSet().Any(item => GetItemId(item).Equals(id));
-            // TODO: Pass in property name
-            return GetItemDbSet().Any(EntityFrameworkRepositoryHelper.GetExistsExpression<TItem, TId>(id, "Id"));
+
+            return GetItemDbSet().Any(EntityFrameworkRepositoryHelper.GetIdMatchesExpression<TItem, TId>(id, propertyName))
+                || GetItemDbSet().Local.Any(item => GetItemId(item).Equals(id));
         }
 
         /// <summary>
@@ -163,6 +171,8 @@ namespace JobSearch.Serialization
         /// </exception>
         public void Create(TItem item)
         {
+            // Contract.Requires<ArgumentNullException>(item != null, "item");
+
             GetItemDbSet().Add(item);
             Dirty = true;
         }
@@ -199,10 +209,11 @@ namespace JobSearch.Serialization
         {
             TItem itemToDelete;
 
-            itemToDelete = GetItemDbSet().FirstOrDefault(item => GetItemId(item).Equals(id));
+            itemToDelete = GetItemDbSet().FirstOrDefault(
+                EntityFrameworkRepositoryHelper.GetIdMatchesExpression<TItem, TId>(id, propertyName));
             if (itemToDelete == null)
             {
-                // Should not happen but just in case
+                // Should not happen due to precondition but just in case
                 throw new ArgumentException(
                     string.Format("Item with id '{0}' does not exist", id), "id");
             }

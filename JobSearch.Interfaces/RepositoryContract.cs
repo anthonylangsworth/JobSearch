@@ -102,6 +102,7 @@ namespace JobSearch.Interfaces
             Contract.Requires<ArgumentException>(!Exists(GetItemId(item)), "item");
             Contract.Ensures(Exists(GetItemId(item)));
             Contract.Ensures(Get(GetItemId(item)).Equals(item));
+            Contract.Ensures(GetAll().Any());
             Contract.Ensures(Dirty);
         }
 
