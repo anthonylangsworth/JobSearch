@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.Entity;
 using System.Diagnostics.Contracts;
 using System.Linq;
@@ -106,11 +107,23 @@ namespace JobSearch.Serialization
         /// </returns>
         public bool Exists(TId id)
         {
-            // Invoking a lambda or delegate is not allowed within a LINQ to Entities expression
-            // Expression<Func<TItem, bool>> expression = item => GetItemId(item).Equals(id);
-            // return GetItemDbSet().Any(item => GetItemId(item).Equals(id));
+            TItem local;
+            bool existsLocally;
 
-            return GetItemDbSet().Any(EntityFrameworkRepositoryHelper.GetIdMatchesExpression<TItem, TId>(id, propertyName));
+            existsLocally = false;
+
+            // Invoking a lambda or delegate is not allowed within a LINQ to Entities expression
+            local = GetItemDbSet().Local.FirstOrDefault(
+                EntityFrameworkRepositoryHelper.GetIdMatchesExpression<TItem, TId>(id, propertyName).Compile());
+            if (local != default(TItem))
+            {
+                existsLocally =
+                    new[] {EntityState.Added, EntityState.Modified, EntityState.Unchanged}.Contains(
+                        DbContext.Entry(local).State);
+            }
+
+            return existsLocally
+                   || GetItemDbSet().Any(EntityFrameworkRepositoryHelper.GetIdMatchesExpression<TItem, TId>(id, propertyName));
         }
 
         /// <summary>

@@ -119,7 +119,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="RepositoryWiper.cs" />
-    <Compile Include="TestContractRepository.cs" />
+    <Compile Include="TestContactRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestEntityFrameworkRepositoryHelper.cs" />
   </ItemGroup>

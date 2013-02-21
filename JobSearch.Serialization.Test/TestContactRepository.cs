@@ -9,7 +9,7 @@ using NUnit.Framework;
 namespace JobSearch.Serialization.Test
 {
     [TestFixture]
-    public class TestContractRepository
+    public class TestContactRepository
     {
         [TestFixtureSetUp]
         public void TestFixtureSetUp()
@@ -119,7 +119,6 @@ namespace JobSearch.Serialization.Test
         {
             EntityFrameworkRepository<JobSearchContext, int, Contact> repository;
             Contact updatedContact;
-            IEnumerable<PropertyInfo> properties;
 
             using (repository = new EntityFrameworkRepository<JobSearchContext, int, Contact>())
             using (RepositoryWiper<int, Contact> wiper = 
@@ -175,8 +174,6 @@ namespace JobSearch.Serialization.Test
         public void TestDelete()
         {
             EntityFrameworkRepository<JobSearchContext, int, Contact> repository;
-            Contact first;
-            IEnumerable<PropertyInfo> properties;
 
             using (repository = new EntityFrameworkRepository<JobSearchContext, int, Contact>())
             using (new RepositoryWiper<int, Contact>(repository, repository.GetItemId))
@@ -206,8 +203,6 @@ namespace JobSearch.Serialization.Test
         public void TestDelete_Empty()
         {
             EntityFrameworkRepository<JobSearchContext, int, Contact> repository;
-            Contact first;
-            IEnumerable<PropertyInfo> properties;
 
             using (repository = new EntityFrameworkRepository<JobSearchContext, int, Contact>())
             using (new RepositoryWiper<int, Contact>(repository, repository.GetItemId))
