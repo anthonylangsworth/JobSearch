@@ -51,9 +51,6 @@ namespace JobSearch.Serialization
         /// </exception>
         public EntityFrameworkRepository(TDbContext dbContext = null)
         {
-            Contract.Ensures(dbContext == null ? DbContext != null : ReferenceEquals(DbContext, dbContext));
-            Contract.Ensures(!Dirty);
-
             // Add overrides to take in Funcs for getItemDbSet and getItemId
             // later, if needed.
 
@@ -61,16 +58,6 @@ namespace JobSearch.Serialization
             GetItemDbSet = EntityFrameworkRepositoryHelper.GetDbSet<TDbContext, TItem>(DbContext);
             GetItemId = EntityFrameworkRepositoryHelper.GetId<TItem, TId>(propertyName);
             Dirty = false;
-        }
-
-        /// <summary>
-        /// Class invariants.
-        /// </summary>
-        [ContractInvariantMethod]
-        private void ClassInariants()
-        {
-            Contract.Invariant(DbContext != null);
-            Contract.Invariant(GetItemDbSet != null);
         }
 
         /// <summary>
@@ -117,15 +104,13 @@ namespace JobSearch.Serialization
         /// <returns>
         /// True if it already exists, false otherwise.
         /// </returns>
-        [Pure]
         public bool Exists(TId id)
         {
             // Invoking a lambda or delegate is not allowed within a LINQ to Entities expression
             // Expression<Func<TItem, bool>> expression = item => GetItemId(item).Equals(id);
             // return GetItemDbSet().Any(item => GetItemId(item).Equals(id));
 
-            return GetItemDbSet().Any(EntityFrameworkRepositoryHelper.GetIdMatchesExpression<TItem, TId>(id, propertyName))
-                || GetItemDbSet().Local.Any(item => GetItemId(item).Equals(id));
+            return GetItemDbSet().Any(EntityFrameworkRepositoryHelper.GetIdMatchesExpression<TItem, TId>(id, propertyName));
         }
 
         /// <summary>
@@ -151,7 +136,7 @@ namespace JobSearch.Serialization
         /// </returns>
         public TItem Get(TId id)
         {
-            return GetItemDbSet().FirstOrDefault(item => GetItemId(item).Equals(id));
+            return GetItemDbSet().FirstOrDefault(EntityFrameworkRepositoryHelper.GetIdMatchesExpression<TItem, TId>(id, propertyName));
         }
 
         /// <summary>
@@ -171,7 +156,10 @@ namespace JobSearch.Serialization
         /// </exception>
         public void Create(TItem item)
         {
-            // Contract.Requires<ArgumentNullException>(item != null, "item");
+            if (item == null)
+            {
+                throw new ArgumentNullException("item");
+            }
 
             GetItemDbSet().Add(item);
             Dirty = true;
@@ -191,7 +179,20 @@ namespace JobSearch.Serialization
         /// </exception>
         public void Update(TItem item)
         {
-            Delete(GetItemId(item));
+            if (item == null)
+            {
+                throw new ArgumentNullException("item");
+            }
+
+            try
+            {
+                Delete(GetItemId(item));
+            }
+            catch (ArgumentException ex)
+            {
+                throw new ArgumentException(ex.Message, "item", ex);
+            }
+
             Create(item);
             Dirty = true;
         }
@@ -213,7 +214,6 @@ namespace JobSearch.Serialization
                 EntityFrameworkRepositoryHelper.GetIdMatchesExpression<TItem, TId>(id, propertyName));
             if (itemToDelete == null)
             {
-                // Should not happen due to precondition but just in case
                 throw new ArgumentException(
                     string.Format("Item with id '{0}' does not exist", id), "id");
             }

@@ -111,7 +111,6 @@
     <Compile Include="IContactRepository.cs" />
     <Compile Include="IRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RepositoryContract.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\JobSearch\JobSearch.csproj">

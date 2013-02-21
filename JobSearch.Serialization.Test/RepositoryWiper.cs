@@ -63,15 +63,23 @@ namespace JobSearch.Serialization.Test
         }
 
         /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// Empty the repository.
         /// </summary>
-        public void Dispose()
+        public void Wipe()
         {
             foreach (TItem item in Repository.GetAll())
             {
                 Repository.Delete(GetItemId(item));
             }
             Repository.Save();
+        }
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        public void Dispose()
+        {
+            Wipe();
         }
     }
 }

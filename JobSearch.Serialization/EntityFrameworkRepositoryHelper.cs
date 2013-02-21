@@ -43,8 +43,10 @@ namespace JobSearch.Serialization
             where TDbContext : DbContext
             where TItem: class
         {
-            Contract.Requires<ArgumentNullException>(dbContext != null);
-            Contract.Ensures(Contract.Result<Func<DbSet<TItem>>>() != null);
+            if (dbContext == null)
+            {
+                throw new ArgumentNullException("dbContext");
+            }
 
             IEnumerable<MethodInfo> propertyGetMethods;
 
@@ -70,15 +72,31 @@ namespace JobSearch.Serialization
         }
 
         /// <summary>
-        /// 
+        /// Given a <paramref name="propertyName"/> of type <typeparamref name="TId"/>, 
+        /// construct a <see cref="Func{TItem, TId}"/> that returns the value of property
+        /// on an object of type <typeparamref name="TItem"/>.
         /// </summary>
-        /// <typeparam name="TItem"></typeparam>
-        /// <typeparam name="TId"></typeparam>
-        /// <returns></returns>
+        /// <typeparam name="TItem">
+        /// The type of item the ID will be extracted from.
+        /// </typeparam>
+        /// <typeparam name="TId">
+        /// The type of the ID.
+        /// </typeparam>
+        /// <param name="propertyName">
+        /// Optional property name. This cannot be null, empty or whitespace.
+        /// </param>
+        /// <returns>
+        /// A <see cref="Func{TItem, TId}"/> that returns the ID.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// 
+        /// </exception>
         internal static Func<TItem, TId> GetId<TItem, TId>(string propertyName = "Id")
         {
-            Contract.Requires<ArgumentNullException>(!string.IsNullOrEmpty(propertyName));
-            Contract.Ensures(Contract.Result<Func<TItem, TId>>() != null);
+            if (string.IsNullOrWhiteSpace(propertyName))
+            {
+                throw new ArgumentNullException("propertyName");
+            }
 
             IEnumerable<MethodInfo> idPropertyGetMethods;
 
@@ -125,8 +143,10 @@ namespace JobSearch.Serialization
         /// </returns>
         internal static Expression<Func<TItem, bool>> GetIdMatchesExpression<TItem, TId>(TId id, string propertyName)
         {
-            Contract.Requires<ArgumentNullException>(!string.IsNullOrEmpty(propertyName));
-            Contract.Ensures(Contract.Result<Expression<Func<TItem, TId>>>() != null);
+            if (string.IsNullOrEmpty(propertyName))
+            {
+                throw new ArgumentNullException("propertyName");                
+            }
 
             ParameterExpression parameter;
 

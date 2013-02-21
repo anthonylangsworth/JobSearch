@@ -73,8 +73,11 @@ namespace JobSearch.Serialization.Test
             IEnumerable<PropertyInfo> properties;
 
             using (repository = new EntityFrameworkRepository<JobSearchContext, int, Contact>())
-            using (new RepositoryWiper<int, Contact>(repository, repository.GetItemId))
+            using (RepositoryWiper<int, Contact> wiper 
+                = new RepositoryWiper<int, Contact>(repository, repository.GetItemId))
             {
+                wiper.Wipe();
+
                 Assert.That(repository.Exists(TestContacts.SarahBillingsley.Id), Is.False,
                             "Test contact exists");
                 repository.Create(TestContacts.SarahBillingsley);
@@ -112,6 +115,33 @@ namespace JobSearch.Serialization.Test
         }
 
         [Test]
+        public void TestUpdate()
+        {
+            EntityFrameworkRepository<JobSearchContext, int, Contact> repository;
+            Contact updatedContact;
+            IEnumerable<PropertyInfo> properties;
+
+            using (repository = new EntityFrameworkRepository<JobSearchContext, int, Contact>())
+            using (RepositoryWiper<int, Contact> wiper = 
+                new RepositoryWiper<int, Contact>(repository, repository.GetItemId))
+            {
+                wiper.Wipe();
+
+                repository.Create(TestContacts.SarahBillingsley);
+                repository.Save();
+
+                updatedContact = repository.GetAll().First(c => c.Name == TestContacts.SarahBillingsley.Name);
+                updatedContact.Notes = "Completely different notes.";
+                updatedContact.Phone = "Do not dial this.";
+                updatedContact.Organization = "Completely different organization.";
+                repository.Update(updatedContact);
+                repository.Save();
+
+                Assert.That(updatedContact, Is.EqualTo(repository.Get(updatedContact.Id)));
+            }
+        }
+
+        [Test]
         public void TestUpdate_EmptyRepository()
         {
             EntityFrameworkRepository<JobSearchContext, int, Contact> repository;
@@ -138,6 +168,77 @@ namespace JobSearch.Serialization.Test
             {
                 Assert.That(() => repository.Update(null),
                     Throws.TypeOf<ArgumentNullException>().And.Property("ParamName").EqualTo("item"));
+            }
+        }
+
+        [Test]
+        public void TestDelete()
+        {
+            EntityFrameworkRepository<JobSearchContext, int, Contact> repository;
+            Contact first;
+            IEnumerable<PropertyInfo> properties;
+
+            using (repository = new EntityFrameworkRepository<JobSearchContext, int, Contact>())
+            using (new RepositoryWiper<int, Contact>(repository, repository.GetItemId))
+            {
+                Assert.That(repository.Exists(TestContacts.SarahBillingsley.Id), Is.False,
+                            "Test contact exists");
+                repository.Create(TestContacts.SarahBillingsley);
+                Assert.That(repository.Dirty, Is.True,
+                            "Not dirty");
+                repository.Save();
+                Assert.That(repository.Dirty, Is.False,
+                            "Dirty");
+                Assert.That(repository.GetAll().Count(), Is.EqualTo(1),
+                            "Incorrect count");
+                repository.Delete(repository.GetAll().First(c => c.Name == TestContacts.SarahBillingsley.Name).Id);
+                Assert.That(repository.Dirty, Is.True,
+                            "Not dirty");
+                repository.Save();
+                Assert.That(repository.Dirty, Is.False,
+                            "Dirty");
+                Assert.That(repository.GetAll().Count(), Is.EqualTo(0),
+                            "Incorrect count");
+            }
+        }
+
+        [Test]
+        public void TestDelete_Empty()
+        {
+            EntityFrameworkRepository<JobSearchContext, int, Contact> repository;
+            Contact first;
+            IEnumerable<PropertyInfo> properties;
+
+            using (repository = new EntityFrameworkRepository<JobSearchContext, int, Contact>())
+            using (new RepositoryWiper<int, Contact>(repository, repository.GetItemId))
+            {
+                Assert.That(repository.Exists(TestContacts.SarahBillingsley.Id), Is.False,
+                            "Test contact exists");
+                Assert.That(() => repository.Delete(TestContacts.SarahBillingsley.Id),
+                    Throws.ArgumentException.And.Property("ParamName").EqualTo("id"));
+            }
+        }
+
+        [Test]
+        public void TestDelete_DoesNotExist()
+        {
+            EntityFrameworkRepository<JobSearchContext, int, Contact> repository;
+            int id;
+
+            using (repository = new EntityFrameworkRepository<JobSearchContext, int, Contact>())
+            using (new RepositoryWiper<int, Contact>(repository, repository.GetItemId))
+            {
+                repository.Create(TestContacts.SarahBillingsley);
+                repository.Save();
+
+                Assert.That(repository.GetAll().Any(c => c.Name == TestContacts.SarahBillingsley.Name),
+                    Is.True, "Test contact does not exist");
+                Assert.That(!repository.GetAll().Any(c => c.Name == TestContacts.PeterSmith.Name), 
+                    Is.True, "Test contact exists");
+
+                id = repository.GetAll().First(c => c.Name == TestContacts.SarahBillingsley.Name).Id + 1; 
+                Assert.That(() => repository.Delete(id),
+                    Throws.ArgumentException.And.Property("ParamName").EqualTo("id"));
             }
         }
     }

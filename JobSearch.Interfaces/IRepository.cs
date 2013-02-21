@@ -17,7 +17,6 @@ namespace JobSearch.Interfaces
     /// <typeparam name="TItem">
     /// The class exposed by the repository.
     /// </typeparam>
-    [ContractClass(typeof(RepositoryContract<,>))]
     public interface IRepository<TId, TItem>: IDisposable
         where TItem : class, IEquatable<TItem>
     {
