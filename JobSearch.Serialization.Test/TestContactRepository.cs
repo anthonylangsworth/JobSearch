@@ -11,14 +11,6 @@ namespace JobSearch.Serialization.Test
     [TestFixture]
     public class TestContactRepository
     {
-        [TestFixtureSetUp]
-        public void TestFixtureSetUp()
-        {
-            Database.SetInitializer(new DropCreateDatabaseIfModelChanges<JobSearchContext>());
-            // Database.SetInitializer(new DropCreateDatabaseAlways<JobSearchContext>());
-            // Database.SetInitializer(new CreateDatabaseIfNotExists<JobSearchContext>());
-        }
-
         [Test]
         public void TestCreation()
         {

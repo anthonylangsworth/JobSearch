@@ -58,13 +58,13 @@ namespace JobSearch.Serialization
             if (!propertyGetMethods.Any())
             {
                 throw new InvalidOperationException(
-                    string.Format("No property found of type DbSet<{0}> on {1}",
+                    String.Format("No property found of type DbSet<{0}> on {1}",
                                   typeof(TItem).Name, dbContext.GetType().Name));
             }
             else if (propertyGetMethods.Count() > 1)
             {
                 throw new InvalidOperationException(
-                    string.Format("Multiple properties found of type DbSet<{0}> on {1}",
+                    String.Format("Multiple properties found of type DbSet<{0}> on {1}",
                                   typeof(TItem).Name, dbContext.GetType().Name));
             }
 
@@ -93,7 +93,7 @@ namespace JobSearch.Serialization
         /// </exception>
         internal static Func<TItem, TId> GetId<TItem, TId>(string propertyName = "Id")
         {
-            if (string.IsNullOrWhiteSpace(propertyName))
+            if (String.IsNullOrWhiteSpace(propertyName))
             {
                 throw new ArgumentNullException("propertyName");
             }
@@ -108,13 +108,13 @@ namespace JobSearch.Serialization
             if (!idPropertyGetMethods.Any())
             {
                 throw new InvalidOperationException(
-                    string.Format("No property called '{0}' found of type '{1}' on type '{2}'",
+                    String.Format("No property called '{0}' found of type '{1}' on type '{2}'",
                                   propertyName, typeof(TId).Name, typeof(TItem).Name));
             }
             else if (idPropertyGetMethods.Count() > 1)
             {
                 throw new InvalidOperationException(
-                    string.Format("Multiple properties called '{0}' found of type '{1}' on type '{2}'",
+                    String.Format("Multiple properties called '{0}' found of type '{1}' on type '{2}'",
                                   propertyName, typeof(TId).Name, typeof(TItem).Name));
             }
 
@@ -143,7 +143,7 @@ namespace JobSearch.Serialization
         /// </returns>
         internal static Expression<Func<TItem, bool>> GetIdMatchesExpression<TItem, TId>(TId id, string propertyName)
         {
-            if (string.IsNullOrEmpty(propertyName))
+            if (String.IsNullOrEmpty(propertyName))
             {
                 throw new ArgumentNullException("propertyName");                
             }
@@ -161,6 +161,107 @@ namespace JobSearch.Serialization
                             typeof(TItem).GetProperty(propertyName)),
                         Expression.Constant(id)),
                     new[] { parameter });
+        }
+
+        /// <summary>
+        /// Does the given <paramref name="expression"/> contain a lambda experssion
+        /// referring to a property (only)?
+        /// </summary>
+        /// <param name="expression">
+        /// The <see cref="Expression"/> to test.
+        /// </param>
+        /// <param name="accessors">
+        /// The property name.
+        /// </param>
+        /// <returns>
+        /// True if it is a property, false otherwise.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="expression"/> cannot be null.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// Either:
+        /// <list type="bullet">
+        ///     <item>
+        ///         <description>
+        ///             <paramref name="expression"/> is not a <see cref="LambdaExpression"/>.
+        ///         </description>
+        ///     </item>
+        ///     <item>
+        ///         <description>
+        ///             <paramref name="expression"/>'s body does not containly only a member access.
+        ///         </description>
+        ///     </item>
+        ///     <item>
+        ///         <description>
+        ///             <paramref name="expression"/>'s body calls a member that is not a property.
+        ///         </description>
+        ///     </item>
+        ///     <item>
+        ///         <description>
+        ///             The property called in <paramref name="expression"/> lacks a get or set
+        ///             accessor as requested by <paramref name="accessors"/>.
+        ///         </description>
+        ///     </item>
+        /// </list>
+        /// </exception>
+        public static string GetPropertyName<TItem, TId>(Expression<Func<TItem, TId>> expression, PropertyAccessors accessors)
+        {
+            if (expression == null)
+            {
+                throw new ArgumentNullException("expression");
+            }
+
+            LambdaExpression lambdaExpression;
+            MemberExpression memberExpression;
+            PropertyInfo propertyInfo;
+            string result;
+
+            lambdaExpression = expression as LambdaExpression;
+            if (expression != null)
+            {
+                memberExpression = expression.Body as MemberExpression;
+                if (memberExpression != null)
+                {
+                    propertyInfo = memberExpression.Member as PropertyInfo;
+                    if (propertyInfo != null)
+                    {
+                        if ((accessors & PropertyAccessors.CanRead) == PropertyAccessors.CanRead
+                            && !propertyInfo.CanRead)
+                        {
+                            throw new ArgumentException(
+                                String.Format("No 'get' accessor on property '{0}'", propertyInfo.Name),
+                                "expression");
+                        }
+
+                        if ((accessors & PropertyAccessors.CanWrite) == PropertyAccessors.CanWrite
+                            && !propertyInfo.CanWrite)
+                        {
+                            throw new ArgumentException(
+                                String.Format("No 'set' accessor on property '{0}'", propertyInfo.Name),
+                                "expression");
+                        }
+
+                        result = propertyInfo.Name;
+                    }
+                    else
+                    {
+                        throw new ArgumentException(
+                            String.Format("Member '{0}' is not a property", memberExpression.Member.Name),
+                            "expression");
+                    }
+                }
+                else
+                {
+                    throw new ArgumentException("Not a member access (e.g. property or method call)", "expression");
+                }
+            }
+            else
+            {
+                throw new ArgumentException("Not a LambdaExpression", "expression");
+            }
+
+            return result;
         }
     }
 }

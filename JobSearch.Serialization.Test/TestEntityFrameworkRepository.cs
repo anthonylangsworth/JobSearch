@@ -10,21 +10,38 @@ using NUnit.Framework;
 
 namespace JobSearch.Serialization.Test
 {
-    public class TestRepository<TRepository, TDbContext, TId, TItem>
-        where TRepository : EntityFrameworkRepository<TDbContext, TId, TItem>, IRepository<TId, TItem>, new()
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TDbContext"></typeparam>
+    /// <typeparam name="TId"></typeparam>
+    /// <typeparam name="TItem"></typeparam>
+    public class TestEntityFrameworkRepository<TDbContext, TId, TItem>
         where TDbContext : DbContext, new()
         where TItem : class, IEquatable<TItem>
     {
         /// <summary>
-        /// Create a new <see cref="TestRepository{TRepository, TDbContext, TId, TItem}"/>.
+        /// Create a new <see cref="TestEntityFrameworkRepository{TDbContext, TId, TItem}"/>.
         /// </summary>
-        protected TestRepository(Func<TDbContext, TRepository> createRepositoryFromContext,
-                              TItem testItem1, TItem testItem2, Expression<Func> nonIdIdentifyingProperty )
+        /// <param name="testItem1">
+        /// </param>
+        /// <param name="testItem2">
+        /// </param>
+        /// <param name="identifyingProperty">
+        /// 
+        /// </param>
+        /// <param name="uniqueProperty">
+        /// </param>
+        /// <param name="varyItem">
+        /// </param>
+        /// <exception cref="ArgumentNullException">
+        /// No argument can be null.
+        /// </exception>
+        protected TestEntityFrameworkRepository(TItem testItem1, TItem testItem2, 
+            Expression<Func<TItem, TId>> identifyingProperty,
+            Expression<Func<TItem, object>> uniqueProperty,
+            Action<TItem> varyItem)
         {
-            if (createRepositoryFromContext == null)
-            {
-                throw new ArgumentNullException("createRepositoryFromContext");
-            }
             if (testItem1 == null)
             {
                 throw new ArgumentNullException("testItem1");
@@ -33,19 +50,44 @@ namespace JobSearch.Serialization.Test
             {
                 throw new ArgumentNullException("testItem2");
             }
+            if (identifyingProperty == null)
+            {
+                throw new ArgumentNullException("identifyingProperty");
+            }
+            if (uniqueProperty == null)
+            {
+                throw new ArgumentNullException("uniqueProperty");
+            }
+            if (varyItem == null)
+            {
+                throw new ArgumentNullException("varyItem");
+            }
 
-            CreateRepositoryFromContext = createRepositoryFromContext;
+            try
+            {
+                IdentifyingPropertyName =
+                    EntityFrameworkRepositoryTestHelper.GetPropertyName(identifyingProperty,
+                    PropertyAccessors.CanRead);
+            }
+            catch (ArgumentException ex)
+            {
+                throw new ArgumentException(ex.Message, "identifyingProperty", ex);
+            }
+
+            try
+            {
+                UniquePropertyName =
+                    EntityFrameworkRepositoryTestHelper.GetPropertyName(uniqueProperty,
+                    PropertyAccessors.CanRead | PropertyAccessors.CanWrite);
+            }
+            catch (ArgumentException ex)
+            {
+                throw new ArgumentException(ex.Message, "uniqueProperty", ex);
+            }
+
             TestItem1 = testItem1;
             TestItem2 = testItem2;
-        }
-
-        /// <summary>
-        /// Create a <typeparamref name="TRepository"/> given 
-        /// a <typeparamref name="TDbContext"/>.
-        /// </summary>
-        public Func<TDbContext, TRepository> CreateRepositoryFromContext
-        {
-            get; private set;
+            Vary = varyItem;
         }
 
         /// <summary>
@@ -66,20 +108,49 @@ namespace JobSearch.Serialization.Test
             private set;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public string IdentifyingPropertyName
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string UniquePropertyName
+        {
+            get; 
+            private set;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public Action<TItem> Vary
+        {
+            get; 
+            private set;
+        }
+
+
+
         [Test]
         public void TestCreation()
         {
-            Assert.DoesNotThrow(() => new TRepository());
+            Assert.DoesNotThrow(() => new EntityFrameworkRepository<TDbContext, TId, TItem>());
         }
 
         [Test]
         public void TestCreation_Argument()
         {
-            TRepository repository;
+            EntityFrameworkRepository<TDbContext, TId, TItem> repository;
             TDbContext context;
 
-            context = new TDbContext();
-            using (repository = CreateRepositoryFromContext(context))
+            using (context = new TDbContext())
+            using (repository = new EntityFrameworkRepository<TDbContext, TId, TItem>(context))
             {
                 Assert.That(repository.DbContext, Is.EqualTo(context), "Incorrect DbContext");
                 Assert.That(repository.Dirty, Is.False, "Incorrect Dirty flag");
@@ -91,9 +162,9 @@ namespace JobSearch.Serialization.Test
         [Test]
         public void TestGetItemId()
         {
-            TRepository repository;
+            EntityFrameworkRepository<TDbContext, TId, TItem> repository;
 
-            using (repository = new TRepository())
+            using (repository = new EntityFrameworkRepository<TDbContext, TId, TItem>())
             {
                 Assert.That(repository.GetItemId(TestItem2),
                     Is.EqualTo(repository.GetItemId(TestItem2)));
@@ -103,9 +174,9 @@ namespace JobSearch.Serialization.Test
         [Test]
         public void TestGetItemDbSet()
         {
-            TRepository repository;
+            EntityFrameworkRepository<TDbContext, TId, TItem> repository;
 
-            using (repository = new TRepository())
+            using (repository = new EntityFrameworkRepository<TDbContext, TId, TItem>())
             {
                 Assert.That(repository.GetItemDbSet(), Is.Not.Null);
             }
@@ -117,7 +188,7 @@ namespace JobSearch.Serialization.Test
             TItem first;
             IEnumerable<PropertyInfo> properties;
 
-            using (TRepository repository = new TRepository())
+            using (EntityFrameworkRepository<TDbContext, TId, TItem> repository = new EntityFrameworkRepository<TDbContext, TId, TItem>())
             using (RepositoryWiper<TId, TItem> wiper 
                 = new RepositoryWiper<TId, TItem>(repository, repository.GetItemId))
             {
@@ -149,7 +220,7 @@ namespace JobSearch.Serialization.Test
         [Test]
         public void TestCreate_Null()
         {
-            using (TRepository repository = new TRepository())
+            using (EntityFrameworkRepository<TDbContext, TId, TItem> repository = new EntityFrameworkRepository<TDbContext, TId, TItem>())
             using (new RepositoryWiper<TId, TItem>(repository, repository.GetItemId))
             {
                 Assert.That(() => repository.Create(null), 
@@ -162,7 +233,7 @@ namespace JobSearch.Serialization.Test
         {
             TItem updatedContact;
 
-            using (TRepository repository = new TRepository())
+            using (EntityFrameworkRepository<TDbContext, TId, TItem> repository = new EntityFrameworkRepository<TDbContext, TId, TItem>())
             using (RepositoryWiper<TId, TItem> wiper = 
                 new RepositoryWiper<TId, TItem>(repository, repository.GetItemId))
             {
@@ -171,7 +242,7 @@ namespace JobSearch.Serialization.Test
                 repository.Create(TestItem1);
                 repository.Save();
 
-                updatedContact = repository.GetAll().First(c => c.Name == TestItem1.Name);
+                updatedContact = repository.GetAll().First(EntityFrameworkRepositoryHelper.GetIdMatchesExpression(TId, ));
                 updatedContact.Notes = "Completely different notes.";
                 updatedContact.Phone = "Do not dial this.";
                 updatedContact.Organization = "Completely different organization.";
@@ -185,9 +256,9 @@ namespace JobSearch.Serialization.Test
         [Test]
         public void TestUpdate_EmptyRepository()
         {
-            TRepository repository;
+            EntityFrameworkRepository<TDbContext, TId, TItem> repository;
 
-            using (repository = new TRepository())
+            using (repository = new EntityFrameworkRepository<TDbContext, TId, TItem>())
             using (new RepositoryWiper<TId, TItem>(repository, repository.GetItemId))
             {
                 Assert.That(repository.Exists(repository.GetItemId(TestItem1)), Is.False,
@@ -200,7 +271,7 @@ namespace JobSearch.Serialization.Test
         [Test]
         public void TestUpdate_Null()
         {
-            using (TRepository repository = new TRepository())
+            using (EntityFrameworkRepository<TDbContext, TId, TItem> repository = new EntityFrameworkRepository<TDbContext, TId, TItem>())
             using (new RepositoryWiper<TId, TItem>(repository, repository.GetItemId))
             {
                 Assert.That(() => repository.Update(null),
@@ -211,7 +282,7 @@ namespace JobSearch.Serialization.Test
         [Test]
         public void TestDelete()
         {
-            using (TRepository repository = new TRepository())
+            using (EntityFrameworkRepository<TDbContext, TId, TItem> repository = new EntityFrameworkRepository<TDbContext, TId, TItem>())
             using (new RepositoryWiper<TId, TItem>(repository, repository.GetItemId))
             {
                 Assert.That(repository.Exists(repository.GetItemId(TestItem1)), Is.False,
@@ -238,7 +309,7 @@ namespace JobSearch.Serialization.Test
         [Test]
         public void TestDelete_Empty()
         {
-            using (TRepository repository = new TRepository())
+            using (EntityFrameworkRepository<TDbContext, TId, TItem> repository = new EntityFrameworkRepository<TDbContext, TId, TItem>())
             using (new RepositoryWiper<TId, TItem>(repository, repository.GetItemId))
             {
                 Assert.That(repository.Exists(repository.GetItemId(TestItem1)), Is.False,
@@ -253,7 +324,7 @@ namespace JobSearch.Serialization.Test
         {
             TId id;
 
-            using (TRepository repository = new TRepository())
+            using (EntityFrameworkRepository<TDbContext, TId, TItem> repository = new EntityFrameworkRepository<TDbContext, TId, TItem>())
             using (new RepositoryWiper<TId, TItem>(repository, repository.GetItemId))
             {
                 repository.Create(TestItem1);
