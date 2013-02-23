@@ -118,7 +118,6 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
-    <Compile Include="EntityFrameworkRepositoryTestHelper.cs" />
     <Compile Include="RepositoryWiper.cs" />
     <Compile Include="TestActivityRepository.cs" />
     <Compile Include="TestContactRepository.cs" />

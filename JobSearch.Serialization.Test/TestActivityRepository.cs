@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using JobSearch.Test;
 using NUnit.Framework;
 
 namespace JobSearch.Serialization.Test
@@ -12,8 +13,8 @@ namespace JobSearch.Serialization.Test
     {
         public TestActivityRepository()
             : base(
-                testItem1: null, 
-                testItem2: null, 
+                testItem1: TestActivities.FollowUpRecruiter,
+                testItem2: TestActivities.JobInterview, 
                 identifyingProperty: activity => activity.Id, 
                 uniqueProperty: activity => activity.Description, 
                 varyItem: activity => activity.Completed = !activity.Completed)

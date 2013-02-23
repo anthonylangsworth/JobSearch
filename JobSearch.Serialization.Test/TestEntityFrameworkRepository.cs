@@ -4,8 +4,6 @@ using System.Data.Entity;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using JobSearch.Test;
-using JobSearch.Interfaces;
 using NUnit.Framework;
 
 namespace JobSearch.Serialization.Test
@@ -24,18 +22,29 @@ namespace JobSearch.Serialization.Test
         /// Create a new <see cref="TestEntityFrameworkRepository{TDbContext, TId, TItem}"/>.
         /// </summary>
         /// <param name="testItem1">
+        /// An item to use testing the repository. This cannot be null
+        /// or equal to <paramref name="testItem2"/>.
         /// </param>
         /// <param name="testItem2">
+        /// An item to use testing the repository. This cannot be null
+        /// or equal to <paramref name="testItem1"/>.
         /// </param>
         /// <param name="identifyingProperty">
-        /// 
+        /// The property that uniquely identifies an item, such as an ID.
         /// </param>
         /// <param name="uniqueProperty">
+        /// A property that is usually unique to an item, such as a name.
         /// </param>
         /// <param name="varyItem">
+        /// Vary an item such that it is no longer equal to its previous
+        /// value.
         /// </param>
         /// <exception cref="ArgumentNullException">
         /// No argument can be null.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// Either <paramref name="testItem1"/> equals <paramref name="testItem2"/>
+        /// or the given properties do not exist on <typeparamref name="TItem"/>.
         /// </exception>
         protected TestEntityFrameworkRepository(TItem testItem1, TItem testItem2, 
             Expression<Func<TItem, TId>> identifyingProperty,
@@ -49,6 +58,10 @@ namespace JobSearch.Serialization.Test
             if (testItem2 == null)
             {
                 throw new ArgumentNullException("testItem2");
+            }
+            if (testItem1.Equals(testItem2))
+            {
+                throw new ArgumentException("testItem1 cannot equal testItem2");   
             }
             if (identifyingProperty == null)
             {
@@ -66,7 +79,7 @@ namespace JobSearch.Serialization.Test
             try
             {
                 IdentifyingPropertyName =
-                    EntityFrameworkRepositoryTestHelper.GetPropertyName(identifyingProperty,
+                    EntityFrameworkRepositoryHelper.GetPropertyName(identifyingProperty,
                     PropertyAccessors.CanRead);
             }
             catch (ArgumentException ex)
@@ -77,7 +90,7 @@ namespace JobSearch.Serialization.Test
             try
             {
                 UniquePropertyName =
-                    EntityFrameworkRepositoryTestHelper.GetPropertyName(uniqueProperty,
+                    EntityFrameworkRepositoryHelper.GetPropertyName(uniqueProperty,
                     PropertyAccessors.CanRead | PropertyAccessors.CanWrite);
             }
             catch (ArgumentException ex)
@@ -87,7 +100,7 @@ namespace JobSearch.Serialization.Test
 
             TestItem1 = testItem1;
             TestItem2 = testItem2;
-            Vary = varyItem;
+            VaryItem = varyItem;
         }
 
         /// <summary>
@@ -109,8 +122,14 @@ namespace JobSearch.Serialization.Test
         }
 
         /// <summary>
-        /// 
+        /// The name of the property that uniquely
+        /// identifies <typeparamref name="TItem"/>,
+        /// usually an integer ID.
         /// </summary>
+        /// <remarks>
+        /// This value may be assigned or modified 
+        /// by the repository.
+        /// </remarks>
         public string IdentifyingPropertyName
         {
             get;
@@ -118,8 +137,14 @@ namespace JobSearch.Serialization.Test
         }
 
         /// <summary>
-        /// 
+        /// The name of the property that is
+        /// usually unique to an <typeparamref name="TItem"/>
+        /// other than the identifying property.
         /// </summary>
+        /// <remarks>
+        /// This value should not be modified by the
+        /// repository.
+        /// </remarks>
         public string UniquePropertyName
         {
             get; 
@@ -127,15 +152,15 @@ namespace JobSearch.Serialization.Test
         }
 
         /// <summary>
-        /// 
+        /// Change the item such that it is not Equal to 
+        /// the previous version without changing the
+        /// identifying property or unique property.
         /// </summary>
-        public Action<TItem> Vary
+        public Action<TItem> VaryItem
         {
             get; 
             private set;
         }
-
-
 
         [Test]
         public void TestCreation()
@@ -231,9 +256,11 @@ namespace JobSearch.Serialization.Test
         [Test]
         public void TestUpdate()
         {
-            TItem updatedContact;
+            TItem updatedItem;
+            object expectedValue;
 
-            using (EntityFrameworkRepository<TDbContext, TId, TItem> repository = new EntityFrameworkRepository<TDbContext, TId, TItem>())
+            using (EntityFrameworkRepository<TDbContext, TId, TItem> repository = 
+                new EntityFrameworkRepository<TDbContext, TId, TItem>())
             using (RepositoryWiper<TId, TItem> wiper = 
                 new RepositoryWiper<TId, TItem>(repository, repository.GetItemId))
             {
@@ -242,14 +269,16 @@ namespace JobSearch.Serialization.Test
                 repository.Create(TestItem1);
                 repository.Save();
 
-                updatedContact = repository.GetAll().First(EntityFrameworkRepositoryHelper.GetIdMatchesExpression(TId, ));
-                updatedContact.Notes = "Completely different notes.";
-                updatedContact.Phone = "Do not dial this.";
-                updatedContact.Organization = "Completely different organization.";
-                repository.Update(updatedContact);
+                expectedValue = typeof(TItem).GetProperty(UniquePropertyName).GetMethod.Invoke(TestItem1, new object[0]);
+                updatedItem = repository.GetAll().First(
+                    EntityFrameworkRepositoryHelper.GetMatchesExpression<TItem, object>(expectedValue, UniquePropertyName));
+
+                VaryItem(updatedItem);
+
+                repository.Update(updatedItem);
                 repository.Save();
 
-                Assert.That(updatedContact, Is.EqualTo(repository.Get(repository.GetItemId(updatedContact))));
+                Assert.That(updatedItem, Is.EqualTo(repository.Get(repository.GetItemId(updatedItem))));
             }
         }
 
@@ -295,7 +324,10 @@ namespace JobSearch.Serialization.Test
                             "Dirty");
                 Assert.That(repository.GetAll().Count(), Is.EqualTo(1),
                             "Incorrect count");
-                repository.Delete(repository.GetAll().First(c => c.Name == TestItem1.Name).Id);
+                repository.Delete(
+                    repository.GetItemId(
+                        repository.GetAll().First(
+                            EntityFrameworkRepositoryHelper.GetMatchesExpression(TestItem1, UniquePropertyName))));
                 Assert.That(repository.Dirty, Is.True,
                             "Not dirty");
                 repository.Save();
@@ -330,12 +362,19 @@ namespace JobSearch.Serialization.Test
                 repository.Create(TestItem1);
                 repository.Save();
 
-                Assert.That(repository.GetAll().Any(c => c.Name == TestItem1.Name),
+                Assert.That(repository.GetAll().Any(
+                        EntityFrameworkRepositoryHelper.GetMatchesExpression(TestItem1, UniquePropertyName)),
                     Is.True, "Test contact does not exist");
-                Assert.That(!repository.GetAll().Any(c => c.Name == TestItem2.Name), 
+                Assert.That(!repository.GetAll().Any(
+                        EntityFrameworkRepositoryHelper.GetMatchesExpression(TestItem2, UniquePropertyName)), 
                     Is.True, "Test contact exists");
 
-                id = repository.GetAll().First(c => c.Name == TestItem1.Name).Id + 1; 
+                id = repository.GetItemId(
+                    repository.GetAll().First(
+                        EntityFrameworkRepositoryHelper.GetMatchesExpression(TestItem1, UniquePropertyName)));
+                Assert.That(() => repository.Delete(id),
+                    Throws.Nothing);
+                repository.Save();
                 Assert.That(() => repository.Delete(id),
                     Throws.ArgumentException.And.Property("ParamName").EqualTo("id"));
             }

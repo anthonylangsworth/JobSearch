@@ -14,6 +14,16 @@ namespace JobSearch
         /// <summary>
         /// Create a new <see cref="Activity"/>.
         /// </summary>
+        public Activity()
+        {
+            Contract.Ensures(!Completed, "Not completed");
+
+            this.Completed = false;
+        }
+
+        /// <summary>
+        /// Create a new <see cref="Activity"/>.
+        /// </summary>
         /// <param name="id">
         /// The ID of the activity.
         /// </param>
@@ -95,8 +105,6 @@ namespace JobSearch
         [ContractInvariantMethod]
         private void ClassInvariants()
         {
-            Contract.Invariant(Contact != null,
-                "Contact cannot be null");
             Contract.Invariant(Duration == Duration.Duration(),
                 "Duration must be positive");
         }

@@ -114,7 +114,7 @@ namespace JobSearch.Serialization
 
             // Invoking a lambda or delegate is not allowed within a LINQ to Entities expression
             local = GetItemDbSet().Local.FirstOrDefault(
-                EntityFrameworkRepositoryHelper.GetIdMatchesExpression<TItem, TId>(id, propertyName).Compile());
+                EntityFrameworkRepositoryHelper.GetMatchesExpression<TItem, TId>(id, propertyName).Compile());
             if (local != default(TItem))
             {
                 existsLocally =
@@ -123,7 +123,7 @@ namespace JobSearch.Serialization
             }
 
             return existsLocally
-                   || GetItemDbSet().Any(EntityFrameworkRepositoryHelper.GetIdMatchesExpression<TItem, TId>(id, propertyName));
+                   || GetItemDbSet().Any(EntityFrameworkRepositoryHelper.GetMatchesExpression<TItem, TId>(id, propertyName));
         }
 
         /// <summary>
@@ -149,7 +149,7 @@ namespace JobSearch.Serialization
         /// </returns>
         public TItem Get(TId id)
         {
-            return GetItemDbSet().FirstOrDefault(EntityFrameworkRepositoryHelper.GetIdMatchesExpression<TItem, TId>(id, propertyName));
+            return GetItemDbSet().FirstOrDefault(EntityFrameworkRepositoryHelper.GetMatchesExpression<TItem, TId>(id, propertyName));
         }
 
         /// <summary>
@@ -224,7 +224,7 @@ namespace JobSearch.Serialization
             TItem itemToDelete;
 
             itemToDelete = GetItemDbSet().FirstOrDefault(
-                EntityFrameworkRepositoryHelper.GetIdMatchesExpression<TItem, TId>(id, propertyName));
+                EntityFrameworkRepositoryHelper.GetMatchesExpression<TItem, TId>(id, propertyName));
             if (itemToDelete == null)
             {
                 throw new ArgumentException(

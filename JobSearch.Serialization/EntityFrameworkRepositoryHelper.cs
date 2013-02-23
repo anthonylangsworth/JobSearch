@@ -129,11 +129,11 @@ namespace JobSearch.Serialization
         /// <typeparam name="TItem">
         /// The type of item the property is called on.
         /// </typeparam>
-        /// <typeparam name="TId">
+        /// <typeparam name="TProperty">
         /// The property type.
         /// </typeparam>
-        /// <param name="id">
-        /// The ID to match.
+        /// <param name="expectedValue">
+        /// The value the property should match.
         /// </param>
         /// <param name="propertyName">
         /// The name of the property to match. This cannot be null, empty or whitespace.
@@ -141,9 +141,13 @@ namespace JobSearch.Serialization
         /// <returns>
         /// An expression that can be used in a LINQ query.
         /// </returns>
-        internal static Expression<Func<TItem, bool>> GetIdMatchesExpression<TItem, TId>(TId id, string propertyName)
+        /// <exception cref="ArgumentNullException">
+        /// <paramref name="propertyName"/> cannot be null, empty or whitespace.
+        /// ></exception>
+        internal static Expression<Func<TItem, bool>> GetMatchesExpression<TItem, TProperty>(
+            TProperty expectedValue, string propertyName)
         {
-            if (String.IsNullOrEmpty(propertyName))
+            if (string.IsNullOrWhiteSpace(propertyName))
             {
                 throw new ArgumentNullException("propertyName");                
             }
@@ -159,7 +163,70 @@ namespace JobSearch.Serialization
                         Expression.MakeMemberAccess(
                             parameter, 
                             typeof(TItem).GetProperty(propertyName)),
-                        Expression.Constant(id)),
+                        Expression.Constant(expectedValue)),
+                    new[] { parameter });
+        }
+
+        /// <summary>
+        /// Return an <see cref="Expression"/> that can be used in a LINQ to entities
+        /// query that matches the property<paramref name="propertyName"/> on an item
+        /// of type <typeparamref name="TItem"/>.
+        /// </summary>
+        /// <typeparam name="TItem">
+        /// The type of item the property is called on.
+        /// </typeparam>
+        /// <param name="item">
+        /// The item whose property should be matched.
+        /// </param>
+        /// <param name="propertyName">
+        /// The name of the property to match. This cannot be null, empty or whitespace.
+        /// </param>
+        /// <returns>
+        /// An expression that can be used in a LINQ query.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// No argument can be null.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// <paramref name="propertyName"/> is not a property on <typeparamref name="TItem"/>
+        /// or there is no 'get' accessor.
+        /// </exception>
+        internal static Expression<Func<TItem, bool>> GetMatchesExpression<TItem>(
+            TItem item, string propertyName)
+            where TItem: class
+        {
+            if (string.IsNullOrWhiteSpace(propertyName))
+            {
+                throw new ArgumentNullException("propertyName");
+            }
+            if (item == null)
+            {
+                throw new ArgumentNullException("item");
+            }
+            if (typeof (TItem).GetProperty(propertyName) == null
+                || !typeof (TItem).GetProperty(propertyName).CanRead)
+            {
+                throw new ArgumentException(
+                    string.Format("'{0}' is not a property on '{1}' or lacks a 'get' accessor", 
+                        propertyName, typeof(TItem).FullName),
+                    "propertyName");
+            }
+
+            ParameterExpression parameter;
+            object expectedValue;
+
+            expectedValue = typeof(TItem).GetProperty(propertyName).GetMethod.Invoke(item, new object[0]);
+
+            // Must be same instance (e.g. http://msdn.microsoft.com/en-us/library/bb882637.aspx)
+            parameter = Expression.Parameter(typeof(TItem), "item");
+
+            return
+                Expression.Lambda<Func<TItem, bool>>(
+                    Expression.Equal(
+                        Expression.MakeMemberAccess(
+                            parameter,
+                            typeof(TItem).GetProperty(propertyName)),
+                        Expression.Constant(expectedValue)),
                     new[] { parameter });
         }
 
