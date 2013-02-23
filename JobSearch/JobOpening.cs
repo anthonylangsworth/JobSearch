@@ -9,7 +9,7 @@ namespace JobSearch
     /// <summary>
     /// An job opening.
     /// </summary>
-    public class JobOpening
+    public class JobOpening : IEquatable<JobOpening>
     {
         private readonly List<Contact> additionalContacts;
 
@@ -145,6 +145,57 @@ namespace JobSearch
         {
             return String.Format("Id: {0}, Organization: {1}, Title: {2}, Url: {3}, AdvertisedDate: {4}", 
                 Id, Organization, Title, Url, AdvertisedDate);
+        }
+
+        /// <summary>
+        /// Indicates whether the current object is equal to another object of the same type.
+        /// </summary>
+        /// <returns>
+        /// true if the current object is equal to the <paramref name="other"/> parameter; otherwise, false.
+        /// </returns>
+        /// <param name="other">An object to compare with this object.</param>
+        public bool Equals(JobOpening other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Equals(additionalContacts, other.additionalContacts) && Equals(activities, other.activities) && string.Equals(Url, other.Url) && string.Equals(Title, other.Title) && string.Equals(Organization, other.Organization) && string.Equals(Notes, other.Notes) && AdvertisedDate.Equals(other.AdvertisedDate) && Id == other.Id;
+        }
+
+        /// <summary>
+        /// Determines whether the specified <see cref="T:System.Object"/> is equal to the current <see cref="T:System.Object"/>.
+        /// </summary>
+        /// <returns>
+        /// true if the specified object  is equal to the current object; otherwise, false.
+        /// </returns>
+        /// <param name="obj">The object to compare with the current object. </param>
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((JobOpening)obj);
+        }
+
+        /// <summary>
+        /// Serves as a hash function for a particular type. 
+        /// </summary>
+        /// <returns>
+        /// A hash code for the current <see cref="T:System.Object"/>.
+        /// </returns>
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hashCode = (additionalContacts != null ? additionalContacts.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (activities != null ? activities.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (Url != null ? Url.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (Title != null ? Title.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (Organization != null ? Organization.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (Notes != null ? Notes.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ AdvertisedDate.GetHashCode();
+                hashCode = (hashCode * 397) ^ Id;
+                return hashCode;
+            }
         }
     }
 }

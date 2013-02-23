@@ -125,6 +125,7 @@
     <Compile Include="TestJobOpening.cs" />
     <Compile Include="TestJobOpeningApplicationExtensions.cs" />
     <Compile Include="TestJobOpeningInterviewExtensions.cs" />
+    <Compile Include="TestJobOpenings.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
