@@ -48,7 +48,7 @@ namespace JobSearch.Serialization
             modelBuilder.Entity<Contact>().HasKey(c => c.Id);
 
             modelBuilder.Entity<Activity>().HasRequired(a => a.Contact)
-                .WithOptional();
+                .WithMany();
             modelBuilder.Entity<Activity>().Property(a => a.Completed).IsRequired();
             modelBuilder.Entity<Activity>().Property(a => a.Description).IsOptional();
             modelBuilder.Entity<Activity>().Property(a => a.Duration).IsRequired();
@@ -61,9 +61,9 @@ namespace JobSearch.Serialization
             modelBuilder.Entity<JobOpening>().Property(jo => jo.Notes).IsOptional();
             modelBuilder.Entity<JobOpening>().Property(jo => jo.AdvertisedDate).IsRequired();
             modelBuilder.Entity<JobOpening>().HasMany(jo => jo.Activities)
-                .WithOptional();
+                .WithRequired();
             modelBuilder.Entity<JobOpening>().HasMany(jo => jo.AdditionalContacts)
-                .WithOptional();
+                .WithMany();
             modelBuilder.Entity<JobOpening>().HasKey(jo => jo.Id);
         }
     }

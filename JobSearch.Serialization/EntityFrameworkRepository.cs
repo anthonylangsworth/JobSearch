@@ -36,14 +36,18 @@ namespace JobSearch.Serialization
         /// The property name on TItem of type <typeparamref name="TId "/>that returns a unique
         /// identifier. Future versions should use a list, including additional entries
         /// like typeof(TItem).Name, and store the property chosen in a field or property.
+        /// The property should also be specified using an Expression rather than property name.
         /// </summary>
         private readonly string propertyName = "Id";
+
+        private bool disposeDbContext;
 
         /// <summary>
         /// Create a new <see cref="EntityFrameworkRepository{TDbContext, TId, TItem}"/>.
         /// </summary>
         /// <param name="dbContext">
-        /// The <typeparamref name="TDbContext"/> to use. If null, a new DbContext will be creatd.
+        /// The <typeparamref name="TDbContext"/> to use. If null, a new DbContext will be created
+        /// and disposed during Dispose. If not null, the caller is responsible for disposing it.
         /// </param>
         /// <exception cref="InvalidOperationException">
         /// Either a property on <typeparamref name="TDbContext"/> that returns a
@@ -55,6 +59,7 @@ namespace JobSearch.Serialization
             // Add overrides to take in Funcs for getItemDbSet and getItemId
             // later, if needed.
 
+            disposeDbContext = dbContext == null;
             DbContext = dbContext ?? new TDbContext();
             GetItemDbSet = EntityFrameworkRepositoryHelper.GetDbSet<TDbContext, TItem>(DbContext);
             GetItemId = EntityFrameworkRepositoryHelper.GetId<TItem, TId>(propertyName);
@@ -66,7 +71,10 @@ namespace JobSearch.Serialization
         /// </summary>
         public void Dispose()
         {
-            DbContext.Dispose();
+            if (disposeDbContext)
+            {
+                DbContext.Dispose();
+            }
         }
 
         /// <summary>

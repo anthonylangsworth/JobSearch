@@ -14,7 +14,7 @@ namespace JobSearch.Serialization.Test
     /// <typeparam name="TDbContext"></typeparam>
     /// <typeparam name="TId"></typeparam>
     /// <typeparam name="TItem"></typeparam>
-    public class TestEntityFrameworkRepository<TDbContext, TId, TItem>
+    public abstract class TestEntityFrameworkRepository<TDbContext, TId, TItem>
         where TDbContext : DbContext, new()
         where TItem : class, IEquatable<TItem>
     {
@@ -173,10 +173,24 @@ namespace JobSearch.Serialization.Test
             private set;
         }
 
+        /// <summary>
+        /// Create or get a repository for use in tests.
+        /// </summary>
+        /// <param name="dbContext">
+        /// An optional <typeparamref name="TDbContext"/>.
+        /// </param>
+        /// <returns>
+        /// A repository for use in tests.
+        /// </returns>
+        protected virtual EntityFrameworkRepository<TDbContext, TId, TItem> CreateRepository(TDbContext dbContext = null)
+        {
+            return new EntityFrameworkRepository<TDbContext, TId, TItem>(dbContext);
+        }
+
         [Test]
         public void TestCreation()
         {
-            Assert.DoesNotThrow(() => new EntityFrameworkRepository<TDbContext, TId, TItem>());
+            Assert.DoesNotThrow(() => CreateRepository());
         }
 
         [Test]
@@ -186,7 +200,7 @@ namespace JobSearch.Serialization.Test
             TDbContext context;
 
             using (context = new TDbContext())
-            using (repository = new EntityFrameworkRepository<TDbContext, TId, TItem>(context))
+            using (repository = CreateRepository(context))
             {
                 Assert.That(repository.DbContext, Is.EqualTo(context), "Incorrect DbContext");
                 Assert.That(repository.Dirty, Is.False, "Incorrect Dirty flag");
@@ -200,7 +214,7 @@ namespace JobSearch.Serialization.Test
         {
             EntityFrameworkRepository<TDbContext, TId, TItem> repository;
 
-            using (repository = new EntityFrameworkRepository<TDbContext, TId, TItem>())
+            using (repository = CreateRepository())
             {
                 Assert.That(repository.GetItemId(TestItem2),
                     Is.EqualTo(repository.GetItemId(TestItem2)));
@@ -212,7 +226,7 @@ namespace JobSearch.Serialization.Test
         {
             EntityFrameworkRepository<TDbContext, TId, TItem> repository;
 
-            using (repository = new EntityFrameworkRepository<TDbContext, TId, TItem>())
+            using (repository = CreateRepository())
             {
                 Assert.That(repository.GetItemDbSet(), Is.Not.Null);
             }
@@ -224,7 +238,7 @@ namespace JobSearch.Serialization.Test
             TItem first;
             IEnumerable<PropertyInfo> properties;
 
-            using (EntityFrameworkRepository<TDbContext, TId, TItem> repository = new EntityFrameworkRepository<TDbContext, TId, TItem>())
+            using (EntityFrameworkRepository<TDbContext, TId, TItem> repository = CreateRepository())
             using (RepositoryWiper<TId, TItem> wiper 
                 = new RepositoryWiper<TId, TItem>(repository, repository.GetItemId))
             {
@@ -256,7 +270,7 @@ namespace JobSearch.Serialization.Test
         [Test]
         public void TestCreate_Null()
         {
-            using (EntityFrameworkRepository<TDbContext, TId, TItem> repository = new EntityFrameworkRepository<TDbContext, TId, TItem>())
+            using (EntityFrameworkRepository<TDbContext, TId, TItem> repository = CreateRepository())
             using (new RepositoryWiper<TId, TItem>(repository, repository.GetItemId))
             {
                 Assert.That(() => repository.Create(null), 
@@ -271,7 +285,7 @@ namespace JobSearch.Serialization.Test
             object expectedValue;
 
             using (EntityFrameworkRepository<TDbContext, TId, TItem> repository = 
-                new EntityFrameworkRepository<TDbContext, TId, TItem>())
+                CreateRepository())
             using (RepositoryWiper<TId, TItem> wiper = 
                 new RepositoryWiper<TId, TItem>(repository, repository.GetItemId))
             {
@@ -298,7 +312,7 @@ namespace JobSearch.Serialization.Test
         {
             EntityFrameworkRepository<TDbContext, TId, TItem> repository;
 
-            using (repository = new EntityFrameworkRepository<TDbContext, TId, TItem>())
+            using (repository = CreateRepository())
             using (new RepositoryWiper<TId, TItem>(repository, repository.GetItemId))
             {
                 Assert.That(repository.Exists(repository.GetItemId(TestItem1)), Is.False,
@@ -311,7 +325,7 @@ namespace JobSearch.Serialization.Test
         [Test]
         public void TestUpdate_Null()
         {
-            using (EntityFrameworkRepository<TDbContext, TId, TItem> repository = new EntityFrameworkRepository<TDbContext, TId, TItem>())
+            using (EntityFrameworkRepository<TDbContext, TId, TItem> repository = CreateRepository())
             using (new RepositoryWiper<TId, TItem>(repository, repository.GetItemId))
             {
                 Assert.That(() => repository.Update(null),
@@ -322,7 +336,7 @@ namespace JobSearch.Serialization.Test
         [Test]
         public void TestDelete()
         {
-            using (EntityFrameworkRepository<TDbContext, TId, TItem> repository = new EntityFrameworkRepository<TDbContext, TId, TItem>())
+            using (EntityFrameworkRepository<TDbContext, TId, TItem> repository = CreateRepository())
             using (new RepositoryWiper<TId, TItem>(repository, repository.GetItemId))
             {
                 Assert.That(repository.Exists(repository.GetItemId(TestItem1)), Is.False,
@@ -352,7 +366,7 @@ namespace JobSearch.Serialization.Test
         [Test]
         public void TestDelete_Empty()
         {
-            using (EntityFrameworkRepository<TDbContext, TId, TItem> repository = new EntityFrameworkRepository<TDbContext, TId, TItem>())
+            using (EntityFrameworkRepository<TDbContext, TId, TItem> repository = CreateRepository())
             using (new RepositoryWiper<TId, TItem>(repository, repository.GetItemId))
             {
                 Assert.That(repository.Exists(repository.GetItemId(TestItem1)), Is.False,
@@ -367,7 +381,7 @@ namespace JobSearch.Serialization.Test
         {
             TId id;
 
-            using (EntityFrameworkRepository<TDbContext, TId, TItem> repository = new EntityFrameworkRepository<TDbContext, TId, TItem>())
+            using (EntityFrameworkRepository<TDbContext, TId, TItem> repository = CreateRepository())
             using (new RepositoryWiper<TId, TItem>(repository, repository.GetItemId))
             {
                 repository.Create(TestItem1);
