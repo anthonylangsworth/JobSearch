@@ -142,7 +142,7 @@ namespace JobSearch.Serialization
         /// </summary>
         /// <param name="id">
         /// The ID of the item to load.
-        /// </param>
+        /// </param>    
         /// <returns>
         /// The <typeparamref name="TItem"/> for <paramref name="id"/> or null
         /// if no item matches.
@@ -196,17 +196,22 @@ namespace JobSearch.Serialization
             {
                 throw new ArgumentNullException("item");
             }
-
-            try
+            if (!Exists(GetItemId(item)))
             {
-                Delete(GetItemId(item));
-            }
-            catch (ArgumentException ex)
-            {
-                throw new ArgumentException(ex.Message, "item", ex);
+                throw new ArgumentException(
+                    string.Format("{0} with id '{1}' does not exist", 
+                        typeof(TItem).Name, GetItemId(item)), "item");
+                
             }
 
-            Create(item);
+            TItem oldItem;
+
+            // See http://stackoverflow.com/questions/11647957/update-on-entity-fails-using-generic-repository
+            // for more information in this behavior.
+
+            oldItem = Get(GetItemId(item));
+            DbContext.Entry(item).CurrentValues.SetValues(oldItem);
+
             Dirty = true;
         }
 
@@ -228,7 +233,7 @@ namespace JobSearch.Serialization
             if (itemToDelete == null)
             {
                 throw new ArgumentException(
-                    string.Format("Item with id '{0}' does not exist", id), "id");
+                    string.Format("{0} with id '{1}' does not exist", typeof(TItem).Name, id), "id");
             }
 
             GetItemDbSet().Remove(itemToDelete);

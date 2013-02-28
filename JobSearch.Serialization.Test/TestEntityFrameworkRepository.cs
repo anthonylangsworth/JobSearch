@@ -19,6 +19,17 @@ namespace JobSearch.Serialization.Test
         where TItem : class, IEquatable<TItem>
     {
         /// <summary>
+        /// Run once before tests start to setup the database.
+        /// </summary>
+        [TestFixtureSetUp]
+        public void TestFixtureSetUp()
+        {
+            // Database.SetInitializer(new DropCreateDatabaseIfModelChanges<JobSearchContext>());
+            Database.SetInitializer(new DropCreateDatabaseAlways<JobSearchContext>());
+            // Database.SetInitializer(new CreateDatabaseIfNotExists<JobSearchContext>());
+        }
+
+        /// <summary>
         /// Create a new <see cref="TestEntityFrameworkRepository{TDbContext, TId, TItem}"/>.
         /// </summary>
         /// <param name="testItem1">

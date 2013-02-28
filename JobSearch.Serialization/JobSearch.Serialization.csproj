@@ -102,9 +102,6 @@
     <Reference Include="EntityFramework">
       <HintPath>..\packages\EntityFramework.5.0.0\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
-    <Reference Include="nunit.framework">
-      <HintPath>..\JobSearch.Test\bin\Debug\nunit.framework.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.Entity" />
@@ -125,7 +122,6 @@
     <Compile Include="JobSearchContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PropertyAccessors.cs" />
-    <Compile Include="TestFixtureSetup.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.Config" />
