@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -40,6 +39,9 @@ namespace JobSearch.Serialization
         /// </summary>
         private readonly string propertyName = "Id";
 
+        /// <summary>
+        /// A supplied TDbContext will not be disposed when the object is disposed.
+        /// </summary>
         private bool disposeDbContext;
 
         /// <summary>
@@ -215,7 +217,7 @@ namespace JobSearch.Serialization
             TItem oldItem;
 
             // See http://stackoverflow.com/questions/11647957/update-on-entity-fails-using-generic-repository
-            // for more information in this behavior.
+            // for more information on this behavior.
 
             oldItem = Get(GetItemId(item));
             DbContext.Entry(item).CurrentValues.SetValues(oldItem);
