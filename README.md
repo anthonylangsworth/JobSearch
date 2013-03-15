@@ -27,4 +27,7 @@ The library also demonstrates the use of
 - Code contracts (in the JobSearch assembly).
 - NUnit for tests (JobSearch.Test and JobSearch.Serialization.Test assemblies).
 
+License
+---
 
+See LICENSE.txt (MIT license).
